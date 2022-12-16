@@ -15,6 +15,7 @@ private:
 public:
     Tile();
     ~Tile();
+    void deletePos();
     friend class Game;      
 };
 
@@ -26,7 +27,7 @@ class Game
         sf::Vector2i genPos();
         int genNewTile();
         int cnt = 0;
-        //Tile MAP[M][N];
+        Tile MAP[M][N];
     public:
         Game(float width, float height);
         ~Game();

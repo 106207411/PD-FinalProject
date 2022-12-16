@@ -2,7 +2,29 @@
 #include <math.h> 
 #include <iostream>
 
-int MAP[M][N];
+//int MAP[M][N];
+Tile::Tile()
+{            
+    value = 0;
+    pos.x = 0;
+    pos.y = 0;
+    prevPos.x = 0;
+    prevPos.y = 0;
+    animaMove = false;
+}
+
+void Tile::deletePos()
+{
+    this->pos.x = 0;
+    this->pos.y = 0;
+    this->prevPos.x = 0;
+    this->prevPos.y = 0;
+}
+
+Tile::~Tile()
+{
+
+}
 
 Game::Game(float width, float height) //備好資料
 {   
@@ -27,7 +49,6 @@ Game::Game(float width, float height) //備好資料
     }
 
     //initialize MAP
-    /*
     for (int i=0; i<M; i++)
         for (int j=0; j<N; j++)
         {   
@@ -38,7 +59,7 @@ Game::Game(float width, float height) //備好資料
             MAP[i][j].prevPos.y = j;
             MAP[i][j].animaMove = false;
         }
-    */
+
    
     //initial generate two tiles 
     this->placeNewTile();
@@ -57,12 +78,12 @@ void Game::draw(sf::RenderWindow &window) //渲染視窗
             int index = 0;
             while (true)
             {   
-                if (MAP[i][j] == 0)
+                if (MAP[i][j].value == 0)
                 {
                     index = 0;
                     break;
                 }
-                else if (MAP[i][j] == pow(2, index))
+                else if (MAP[i][j].value == pow(2, index))
                     break;
                 index++;
             }
@@ -78,29 +99,35 @@ void Game::shift(Direction d) //控制移動事件
         for (int j=0; j<M; j++) // Every row
         {
             for (int i=0; i<N-1; i++) // Search for every 0 (empty tile) and remove it
-                if (MAP[i][j] == 0)
+                if (MAP[i][j].value == 0)
                 {
                     bool change = 0;
                     for (int k=i; k<N-1; k++) // Shift everything up
                     {
-                        MAP[k][j] = MAP[k+1][j];
-                        if (MAP[k][j] != 0)
+                        MAP[k][j].value = MAP[k+1][j].value;
+                        if (MAP[k][j].value != 0)
                         {
+                            MAP[k][j].prevPos =  MAP[k+1][j].pos;
+                            MAP[k+1][j].deletePos();
+                            MAP[k][j].pos.x = j;
+                            MAP[k][j].pos.y = k;
+
+                            //std::cout << MAP[k][j].prevPos.x << ", " << MAP[k][j].prevPos.y << "\n";
                             didShift = 1;
                             change = 1;
                         }
                     }
-                    MAP[N-1][j] = 0;
+                    MAP[N-1][j].value = 0;
                     if (change) i--; // If something really changed (did not shift only 0s) check again the current position
                 }
-                // Merge the tiles with the same number
-                else if (MAP[i][j] == MAP[i+1][j] && MAP[i][j] != 0)
+            for (int i=0; i<N-1; i++) // Merge the tiles with the same number
+                if (MAP[i][j].value == MAP[i+1][j].value && MAP[i][j].value != 0)
                 {
                     didShift = 1;
                     for (int k=i; k<N-1; k++)
-                        MAP[k][j] = MAP[k+1][j];
-                    MAP[N-1][j] = 0;
-                    MAP[i][j] *= 2;
+                        MAP[k][j].value = MAP[k+1][j].value;
+                    MAP[N-1][j].value = 0;
+                    MAP[i][j].value *= 2;
                 }
         }
     }
@@ -109,29 +136,29 @@ void Game::shift(Direction d) //控制移動事件
         for (int i=0; i<N; i++) // Every line
         {
             for (int j=0; j<M-1; j++) // Search for every 0 (empty tile) and remove it
-                if (MAP[i][j] == 0)
+                if (MAP[i][j].value == 0)
                 {
                     bool change = 0;
                     for (int k=j; k<M-1; k++) // Shift everything up
                     {
-                        MAP[i][k] = MAP[i][k+1];
-                        if (MAP[i][k] != 0)
+                        MAP[i][k].value = MAP[i][k+1].value;
+                        if (MAP[i][k].value != 0)
                         {
                             didShift = 1;
                             change = 1;
                         }
                     }
-                    MAP[i][M-1] = 0;
+                    MAP[i][M-1].value = 0;
                     if (change) j--; // If something really changed (did not shift only 0s) check again the current position
                 }
-                // Merge the tiles with the same number
-                else if (MAP[i][j] == MAP[i][j+1] && MAP[i][j] != 0)
+            for (int j=0; j<N-1; j++) // Merge the tiles with the same number
+                if (MAP[i][j].value == MAP[i][j+1].value && MAP[i][j].value != 0)
                 {
                     didShift = 1;
                     for (int k=j; k<M-1; k++)
-                        MAP[i][k] = MAP[i][k+1];
-                    MAP[i][M-1] = 0;
-                    MAP[i][j] *= 2;
+                        MAP[i][k].value = MAP[i][k+1].value;
+                    MAP[i][M-1].value = 0;
+                    MAP[i][j].value *= 2;
                 }
         }
     }
@@ -140,29 +167,30 @@ void Game::shift(Direction d) //控制移動事件
         for (int j=0; j<M; j++) // Every row
         {
             for (int i=N-1; i>=0; i--){ // Search for every 0 (empty tile) and remove it
-                if (MAP[i][j] == 0)
+                if (MAP[i][j].value == 0)
                 {
                     bool change = 0;
                     for (int k=i; k>0; k--) // Shift everything down
                     {
-                        MAP[k][j] = MAP[k-1][j];
-                        if (MAP[k][j] != 0)
+                        MAP[k][j].value = MAP[k-1][j].value;
+                        if (MAP[k][j].value != 0)
                         {
                             didShift = 1;
                             change = 1;
                         }
                     }
-                    MAP[0][j] = 0; //下移的話，最上面那麼會補0
+                    MAP[0][j].value = 0; //下移的話，最上面那麼會補0
                     if (change) i++; // If something really changed (did not shift only 0s) check again the current position
                     //***當移好，要補i回去，讓他繼續在同個位置往上做事
                 }
-                else if (MAP[i][j] == MAP[i-1][j] && MAP[i][j] != 0)
+            for (int i=N-1; i>0; i--) // Merge the tiles with the same number
+                if (MAP[i][j].value == MAP[i-1][j].value && MAP[i][j].value != 0)
                 {
                     didShift = 1;
                     for (int k=i; k>=0; k--)
-                        MAP[k][j] = MAP[k-1][j];
-                    MAP[0][j] = 0;
-                    MAP[i][j] *= 2;
+                        MAP[k][j].value = MAP[k-1][j].value;
+                    MAP[0][j].value = 0;
+                    MAP[i][j].value *= 2;
                 }
             }
         }
@@ -172,29 +200,29 @@ void Game::shift(Direction d) //控制移動事件
         for (int i=0; i<N; i++) // Every line
         {
             for (int j=M-1; j>=0; j--) // Search for every 0 (empty tile) and remove it
-                if (MAP[i][j] == 0)
+                if (MAP[i][j].value == 0)
                 {
                     bool change = 0;
                     for (int k=j; k>0; k--) // Shift everything to the right
                     {
-                        MAP[i][k] = MAP[i][k-1];
-                        if (MAP[i][k] != 0)
+                        MAP[i][k].value = MAP[i][k-1].value;
+                        if (MAP[i][k].value != 0)
                         {
                             didShift = 1;
                             change = 1;
                         }
                     }
-                    MAP[i][0] = 0;
+                    MAP[i][0].value = 0;
                     if (change) j++; // If something really changed (did not shift only 0s) check again the current position
                 }
-                // Merge the tiles with the same number
-                else if (MAP[i][j] == MAP[i][j-1] && MAP[i][j] != 0)
+            for (int j=M-1; j>0; j--) // Merge the tiles with the same number
+                if (MAP[i][j].value == MAP[i][j-1].value && MAP[i][j].value != 0)
                 {
                     didShift = 1;
                     for (int k=j; k>0; k--)
-                        MAP[i][k] = MAP[i][k-1];
-                    MAP[i][0] = 0;
-                    MAP[i][j] *= 2;
+                        MAP[i][k].value = MAP[i][k-1].value;
+                    MAP[i][0].value = 0;
+                    MAP[i][j].value *= 2;
                 }
         }
     }
@@ -202,8 +230,8 @@ void Game::shift(Direction d) //控制移動事件
     if (didShift){
         this->placeNewTile();
         this->setCnt();
-        if (this->getCnt()%5 == 0)
-            this->randomEvent();
+        /*if (this->getCnt()%5 == 0)
+            this->randomEvent();*/
     }
 }
 sf::Vector2i Game::genPos() //隨機生成tiles => position的觀點，確認該地點為0
@@ -213,9 +241,11 @@ sf::Vector2i Game::genPos() //隨機生成tiles => position的觀點，確認該
     {
         v.x = rand()%N;
         v.y = rand()%N;
-        if (MAP[v.y][v.x] == 0)
+        if (MAP[v.y][v.x].value == 0)
             break;
     }
+    MAP[v.y][v.x].pos = v;
+    MAP[v.y][v.x].prevPos = MAP[v.y][v.x].pos;
     return v;
 }
 int Game::genNewTile() //隨機生成數字，2或4
@@ -226,7 +256,7 @@ int Game::genNewTile() //隨機生成數字，2或4
 void Game::placeNewTile()//給定數字，先隨機產生地點(為0)，再給數字(2 or 4)
 {
     sf::Vector2i p = this->genPos();
-    MAP[p.y][p.x] = this->genNewTile();
+    MAP[p.y][p.x].value = this->genNewTile();
 }
 void Game::randomEvent() //隨機事件
 {
@@ -237,9 +267,9 @@ void Game::randomEvent() //隨機事件
         {
             for (int j=0; j<M; j++)
             {
-                if ( MAP[i][j] == pow(2, this->getCnt()%5+1) ) 
+                if ( MAP[i][j].value == pow(2, this->getCnt()%5+1) ) 
                 {
-                    MAP[i][j] =  MAP[i][j]*2;
+                    MAP[i][j].value =  MAP[i][j].value*2;
                 }
             }
         }
@@ -250,9 +280,9 @@ void Game::randomEvent() //隨機事件
         {
             for (int j=0; j<M; j++)
             {
-                if ( MAP[i][j] == 2 ) 
+                if ( MAP[i][j].value == 2 ) 
                 {
-                    MAP[i][j] =  0;
+                    MAP[i][j].value =  0;
                 }
             }
         }
@@ -263,9 +293,9 @@ void Game::randomEvent() //隨機事件
         {
             for (int j=0; j<M; j++)
             {
-                if ( MAP[i][j] == pow(2, this->getCnt()%5+2) ) 
+                if ( MAP[i][j].value == pow(2, this->getCnt()%5+2) ) 
                 {
-                    MAP[i][j] =  MAP[i][j]/2;
+                    MAP[i][j].value =  MAP[i][j].value/2;
                 }
             }
         }
@@ -276,7 +306,7 @@ void Game::coutMap() //COUT
      for (int a=0; a<N; a++)
         {
             for (int b=0; b<M; b++)
-                std::cout << MAP[a][b] << " ";
+                std::cout << MAP[a][b].value << " ";
             std::cout << "\n";
         }
     std::cout << "\n";
