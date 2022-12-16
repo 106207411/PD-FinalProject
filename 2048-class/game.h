@@ -28,6 +28,7 @@ class Game
         int cnt = 0;
         //Tile MAP[M][N];
     public:
+        int map[M][N] = {0};// map initialization
         Game(float width, float height);
         ~Game();
 
@@ -38,4 +39,6 @@ class Game
         void coutMap();
         int getCnt(){return cnt;};
         void setCnt(){cnt++;}
+        bool isGameOver();  // Check if the game is over
+        void reset();       // Reset the game
 };

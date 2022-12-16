@@ -55,16 +55,6 @@ int main()
                         else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S)
                             game.shift(Direction::Down);
                     } 
-                    //////贏了//////
-                    else if (g_start && g_win)
-                    {
-
-                    }
-                    //////輸了//////
-                    else if (g_start && g_lose)
-                    {
-
-                    }
                     break;
                 case sf::Event::Closed:
                     window.close();
@@ -85,6 +75,17 @@ int main()
                         break;
                     }
         */
+
+        // //////贏了//////
+        // else if (g_start && g_win)
+        // {
+
+        // }
+        // //////輸了//////
+        // else if (g_start && g_lose)
+        // {
+
+        // }
         ////////// DRAW //////////
         window.clear(); //畫新的刪舊的
     
