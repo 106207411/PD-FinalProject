@@ -2,17 +2,26 @@
 #include <deque>
 #include <unordered_map>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <iostream>
 
 namespace tw
 {
 	Game::Game(int w, int h)
 	{
 		tileSize = (w - FIELD_MARGIN * 2 - TILE_MARGIN * (FIELD_WIDTH - 1)) / FIELD_WIDTH;
+		mode = 1;
 		animState = false;
 
-		if (!font.loadFromFile("ClearSans.ttf"))
-			printf("Failed to load ClearSans.ttf\n");
-
+		if (mode == 0)
+		{
+			if (!font.loadFromFile("ClearSans.ttf"))
+				printf("Failed to load ClearSans.ttf\n");
+		}
+		else if (mode == 1)
+		{
+			if (!font.loadFromFile("./TaipeiSansTCBeta-Regular.ttf"))
+				printf("Failed to load TaipeiSansTCBeta-Regular.ttf\n");
+		}
 
 		Reset();
 	}
@@ -146,7 +155,8 @@ namespace tw
 		sf::Vector2i newPos = availableMoves[rand() % availableCount];
 		char newTileID = (rand() % 10) < 9 ? 1 : 2;
 
-		map[newPos.x][newPos.y] = newTileID;		
+		map[newPos.x][newPos.y] = newTileID;	
+		std::cout << "Spawned at " << newPos.x << " " << newPos.y << " with " << (int)newTileID << std::endl;
 	}
 
 	void Game::Reset()
@@ -183,33 +193,57 @@ namespace tw
 		return sf::Color(119, 110, 101);
 	}
 
-	std::string Game::getText(char tile)
+	std::wstring Game::getText(char tile)
 	{
 		// this is small optimization - we dont have to use pow()
-		static const std::string text[] = {
-			"",		// empty
-			"2",			// 2^1 == 2
-			"4",			// 2^2 == 4
-			"8",			// 2^3 == 8
-			"16",			// 2^4 == 16
-			"32",			// 2^5 == 32
-			"64",			// 2^6 == 64
-			"128",			// 2^7 == 128
-			"256",			// 2^8 == 256
-			"512",			// 2^9 == 512
-			"1024",			// 2^10 == 1024
-			"2048"			// 2^11 == 2048
+		static const std::wstring text[12] = {
+			L"",				// empty
+			L"2",			// 2^1 == 2
+			L"4",			// 2^2 == 4
+			L"8",			// 2^3 == 8
+			L"16",			// 2^4 == 16
+			L"32",			// 2^5 == 32
+			L"64",			// 2^6 == 64
+			L"128",			// 2^7 == 128
+			L"256",			// 2^8 == 256
+			L"512",			// 2^9 == 512
+			L"1024",			// 2^10 == 1024
+			L"2048"			// 2^11 == 2048
 		};
-		return text[tile];
+
+		// For chinese text, you need to use std:::wstring
+		// https://www.sfml-dev.org/tutorials/2.5/graphics-text.php
+		static const std::wstring school[11] = {
+			L"南台科大",
+			L"中台科大",
+			L"台北城市科大",
+			L"台灣大學",
+			L"台灣首府大學",
+			L"亞洲大學",
+			L"屏科",
+			L"虎科",
+			L"雲科",
+			L"台科",
+			L"開山科大"
+		};
+
+		return (mode==0) ? text[tile] : school[tile];
 	}
 
 	int Game::getTextSize(char tile)
 	{
-		if (tile >= 10)
-			return 35;
-		else if (tile >= 7)
-			return 45;
-		return 55;
+		if (mode==0)
+		{
+			if (tile >= 10)
+				return 35;
+			else if (tile >= 7)
+				return 45;
+			return 55;
+		}
+		else if (mode==1)
+		{
+			return 20;
+		}
 	}
 
 	void Game::move(char dirX, char dirY)
