@@ -18,6 +18,8 @@ namespace tw
 		{
 			if (!font.loadFromFile("ClearSans.ttf"))
 				printf("Failed to load ClearSans.ttf\n");
+			if (!font.loadFromFile("./TaipeiSansTCBeta-Regular.ttf"))
+				printf("Failed to load TaipeiSansTCBeta-Regular.ttf\n");
 		}
 		else if (mode == 1)
 		{
@@ -225,6 +227,8 @@ namespace tw
 			sf::Color(237, 200, 80),			// 2^9 == 512
 			sf::Color(237, 197, 63),			// 2^10 == 1024
 			sf::Color(237, 194, 46),			// 2^11 == 2048
+			sf::Color(240, 128, 128),                       // 12 機會
+                        sf::Color(112, 128, 144)                        // 13 命運
 		};
 		return colors[tile];
 	}
@@ -239,7 +243,7 @@ namespace tw
 	std::wstring Game::getText(char tile)
 	{
 		// this is small optimization - we dont have to use pow()
-		static const std::wstring text[12] = {
+		static const std::wstring text[14] = {
 			L"",				// empty
 			L"2",			// 2^1 == 2
 			L"4",			// 2^2 == 4
@@ -252,6 +256,8 @@ namespace tw
 			L"512",			// 2^9 == 512
 			L"1024",			// 2^10 == 1024
 			L"2048"			// 2^11 == 2048
+			L"機會",
+                        L"命運"
 		};
 
 		// For chinese text, you need to use std:::wstring
@@ -273,7 +279,7 @@ namespace tw
 		return (mode==0) ? text[tile] : school[tile];
 	}
 
-	int Game::getTextSize(char tile)
+	int Game::getTextSize(char tile)  // 格子內的字體大小
 	{
 		if (mode==0)
 		{
@@ -296,7 +302,8 @@ namespace tw
 			for (int y = 0; y < FIELD_HEIGHT; y++)
 				tempMap[x][y] = map[x][y];
 
-		if (dirX == -1) {
+		if (dirX == -1)  // 左
+		{
 			for (int x = 1; x < FIELD_WIDTH; x++) {
 				for (int y = 0; y < FIELD_HEIGHT; y++) {
 					if (tempMap[x][y] == 0)
@@ -315,7 +322,8 @@ namespace tw
 				}
 			}
 		}
-		else if (dirX == 1) {
+		else if (dirX == 1) // 右 
+		{
 			for (int x = FIELD_WIDTH-2; x >= 0; x--) {
 				for (int y = 0; y < FIELD_HEIGHT; y++) {
 					if (tempMap[x][y] == 0)
@@ -334,7 +342,8 @@ namespace tw
 				}
 			}
 		}
-		else if (dirY == -1) {
+		else if (dirY == -1)  // 下 
+		{
 			for (int y = 1; y < FIELD_HEIGHT; y++) {
 				for (int x = 0; x < FIELD_WIDTH; x++) {
 					if (tempMap[x][y] == 0)
@@ -353,7 +362,8 @@ namespace tw
 				}
 			}
 		}
-		else if (dirY == 1) {
+		else if (dirY == 1)  // 上 
+		{
 			for (int y = FIELD_HEIGHT-2; y >= 0; y--) {
 				for (int x = 0; x < FIELD_WIDTH; x++) {
 					if (tempMap[x][y] == 0)
