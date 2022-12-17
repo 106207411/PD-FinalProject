@@ -128,7 +128,6 @@ namespace tw
 	{
 		int availableCount = 0;
 		sf::Vector2i availableMoves[FIELD_WIDTH*FIELD_HEIGHT];
-
 		for (int x = 0; x < FIELD_WIDTH; x++) {
 			for (int y = 0; y < FIELD_HEIGHT; y++) {
 				if (map[x][y] == 0) {

@@ -103,21 +103,18 @@ void Game::shift(Direction d) //控制移動事件
             for (int y=0; y<HEIGHT_PIXEL-1; y++)
             {   
                 sf::Vector2i finalPos = sf::Vector2i(x, y);
-
                 for (int y_move=y+1; y_move<HEIGHT_PIXEL; y_move++)
-                {   
+                {
                     if (MAP[x][y_move].value != 0){
                         if (MAP[x][y].value != 0)
-                        {
                             if (MAP[x][y_move].value != MAP[x][y].value)
                                 break;
-                            else
+                            else 
                                 is_merge = true;
-                        }
                         tileMove(sf::Vector2i(x, y_move), finalPos, is_merge);
                         didShift = true;
-                        is_merge = false;
                         if (!is_merge) y--;
+                        is_merge = false;
                         break;
                     }
                 }
@@ -129,23 +126,21 @@ void Game::shift(Direction d) //控制移動事件
         for (int y=0; y<HEIGHT_PIXEL; y++)
         {   
             for (int x=0; x<WIDTH_PIXEL-1; x++)
-            {   
+            {
                 sf::Vector2i finalPos = sf::Vector2i(x, y);
-
-                for (int x_move=x+1; x_move<HEIGHT_PIXEL; x_move++)
-                {   
-                    if (MAP[x_move][y].value != 0){
+                for (int x_move=x+1; x_move<HEIGHT_PIXEL; x_move++) 
+                {
+                    if (MAP[x_move][y].value != 0)
+                    {
                         if (MAP[x][y].value != 0)
-                        {
                             if (MAP[x_move][y].value != MAP[x][y].value)
                                 break;
-                            else
+                            else 
                                 is_merge = true;
-                        }
                         tileMove(sf::Vector2i(x_move, y), finalPos, is_merge);
                         didShift = true;
-                        is_merge = false;
                         if (!is_merge) x--;
+                        is_merge = false;
                         break;
                     }
                 }
@@ -161,19 +156,18 @@ void Game::shift(Direction d) //控制移動事件
                 sf::Vector2i finalPos = sf::Vector2i(x, y);
 
                 for (int y_move=y-1; y_move>=0; y_move--)
-                {   
-                    if (MAP[x][y_move].value != 0){
+                {
+                    if (MAP[x][y_move].value != 0)
+                    {
                         if (MAP[x][y].value != 0)
-                        {
                             if (MAP[x][y_move].value != MAP[x][y].value)
                                 break;
-                            else
+                            else 
                                 is_merge = true;
-                        }
                         tileMove(sf::Vector2i(x, y_move), finalPos, is_merge);
                         didShift = true;
-                        is_merge = false;
                         if (!is_merge) y++;
+                        is_merge = false;
                         break;
                     }
                 }
@@ -188,19 +182,18 @@ void Game::shift(Direction d) //控制移動事件
             {   
                 sf::Vector2i finalPos = sf::Vector2i(x, y);
                 for (int x_move=x-1; x_move>=0; x_move--)
-                {   
-                    if (MAP[x_move][y].value != 0){
+                {
+                    if (MAP[x_move][y].value != 0)
+                    {
                         if (MAP[x][y].value != 0)
-                        {
                             if (MAP[x_move][y].value != MAP[x][y].value)
                                 break;
-                            else
+                            else 
                                 is_merge = true;
-                        }
                         tileMove(sf::Vector2i(x_move, y), finalPos, is_merge);
                         didShift = true;
-                        is_merge = false;
                         if (!is_merge) x++;
+                        is_merge = false;
                         break;
                     }
                 }
