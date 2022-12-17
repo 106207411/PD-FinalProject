@@ -27,7 +27,7 @@ class Game
         sf::Vector2i genPos();
         int genNewTile();
         int cnt = 0;
-        Tile MAP[M][N];
+        Tile MAP[WIDTH_PIXEL][HEIGHT_PIXEL];
     public:
         Game(float width, float height);
         ~Game();
@@ -39,4 +39,5 @@ class Game
         void coutMap();
         int getCnt(){return cnt;};
         void setCnt(){cnt++;}
+        void tileMove(sf::Vector2i, sf::Vector2i, bool merge);
 };
