@@ -5,7 +5,7 @@ int main()
 {
 	srand(time(NULL));
 
-	sf::RenderWindow wnd(sf::VideoMode(600, 600), "2048", sf::Style::Titlebar | sf::Style::Close);
+	sf::RenderWindow wnd(sf::VideoMode(600, 800), "2048", sf::Style::Titlebar | sf::Style::Close);
 	sf::Event e;
 
 	wnd.setKeyRepeatEnabled(false);

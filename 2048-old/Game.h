@@ -22,6 +22,7 @@ namespace tw
 
 	private:
 		int tileSize;
+		int headerSize;
 		int mode; 		// 0 - 2048, 1 - school
 		char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
 		char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };

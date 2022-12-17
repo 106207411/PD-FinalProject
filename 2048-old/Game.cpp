@@ -5,10 +5,12 @@
 #include <iostream>
 
 namespace tw
-{
+{	
 	Game::Game(int w, int h)
 	{
 		tileSize = (w - FIELD_MARGIN * 2 - TILE_MARGIN * (FIELD_WIDTH - 1)) / FIELD_WIDTH;
+		headerSize = ( h - FIELD_MARGIN*2 - (TILE_MARGIN + tileSize) * (FIELD_HEIGHT));
+		std::cout << "headerSize: " << headerSize << "\n";
 		mode = 1;
 		animState = false;
 
@@ -82,13 +84,53 @@ namespace tw
 		sf::Text text;
 		text.setFont(font);
 		text.setStyle(sf::Text::Style::Bold);
+		
+		//header
+		sf::RectangleShape title;
+		title.setSize(sf::Vector2f( tileSize * 4 + TILE_MARGIN * 3, (headerSize / 2) - TILE_MARGIN));
+		title.setFillColor(sf::Color(187, 173, 160));
+		title.setPosition( FIELD_MARGIN , FIELD_MARGIN );
+		tgt.draw(title);
 
+		text.setString(L"併校模擬器");
+		sf::FloatRect fr = text.getLocalBounds();
+		text.setPosition( FIELD_MARGIN , FIELD_MARGIN );
+		text.setCharacterSize(55);
+		text.setFillColor(sf::Color(143,123,102));
+		tgt.draw(text);
+
+		sf::RectangleShape score_board;
+		score_board.setSize(sf::Vector2f( tileSize * 2 + TILE_MARGIN, (headerSize / 2) - TILE_MARGIN));
+		score_board.setFillColor(sf::Color(187, 173, 160));
+		score_board.setPosition( FIELD_MARGIN , FIELD_MARGIN + (headerSize / 2) );
+		tgt.draw(score_board);
+
+		text.setString("2048");
+		text.setPosition( FIELD_MARGIN , FIELD_MARGIN + (headerSize / 2) );
+		text.setFillColor(sf::Color(255, 255, 255));
+		tgt.draw(text);
+
+		sf::RectangleShape restart;
+		restart.setSize(sf::Vector2f( tileSize * 1.5 + TILE_MARGIN , (headerSize / 2) - (TILE_MARGIN * 2) ));
+		restart.setFillColor(sf::Color(143,123,102));
+		restart.setPosition( FIELD_MARGIN + tileSize * 2.5 + TILE_MARGIN * 2, TILE_MARGIN * 3 + (headerSize / 2) );
+		tgt.draw(restart);
+
+		text.setString(L"重新開始");
+		text.setCharacterSize(20);
+		sf::FloatRect textRect = text.getLocalBounds();
+		//text.setOrigin((tileSize * 1.5 + TILE_MARGIN - textRect.width) / 2 + textRect.left, ((headerSize / 2) - (TILE_MARGIN * 2) - textRect.height) / 2 + textRect.top);
+		text.setPosition( FIELD_MARGIN + tileSize * 2.5 + TILE_MARGIN * 2 + (tileSize * 1.5 + TILE_MARGIN - textRect.width) / 2 + textRect.left , TILE_MARGIN * 3 + (headerSize / 2) + ((headerSize / 2) - (TILE_MARGIN * 2) - textRect.height) / 2);
+		text.setFillColor(sf::Color(255, 255, 255));
+		tgt.draw(text);
+
+		//main
 		sf::RectangleShape tile;
 		tile.setSize(sf::Vector2f(tileSize, tileSize));
 		
 		for (int x = 0; x < FIELD_WIDTH; x++) {
 			for (int y = 0; y < FIELD_HEIGHT; y++) {
-				tile.setPosition(FIELD_MARGIN + x * (tileSize + TILE_MARGIN), FIELD_MARGIN + y * (tileSize + TILE_MARGIN));
+				tile.setPosition(FIELD_MARGIN + x * (tileSize + TILE_MARGIN), headerSize + FIELD_MARGIN + y * (tileSize + TILE_MARGIN));
 				tile.setFillColor(getTileColor(map[x][y]));
 				
 				tgt.draw(tile);
@@ -99,7 +141,7 @@ namespace tw
 
 					sf::FloatRect fr = text.getLocalBounds();
 
-					text.setPosition(FIELD_MARGIN + x * (tileSize + TILE_MARGIN) + (tileSize - fr.width) / 2 - fr.left, FIELD_MARGIN + y * (tileSize + TILE_MARGIN) + (tileSize - fr.height) / 2 - fr.top);
+					text.setPosition(FIELD_MARGIN + x * (tileSize + TILE_MARGIN) + (tileSize - fr.width) / 2 - fr.left, headerSize + FIELD_MARGIN + y * (tileSize + TILE_MARGIN) + (tileSize - fr.height) / 2 - fr.top);
 					text.setFillColor(getTextColor(map[x][y]));
 
 					tgt.draw(text);
@@ -113,9 +155,10 @@ namespace tw
 			sf::Vector2i orig = moves[i].first.first;
 			sf::Vector2i f = fMargin + orig * (tileSize + TILE_MARGIN);
 			sf::Vector2i t = fMargin + moves[i].first.second * (tileSize + TILE_MARGIN);
-			
+
 			float movePercent = (animClock.getElapsedTime().asSeconds() / ANIMATION_DURATION);
 			sf::Vector2f curPos = sf::Vector2f(f) + sf::Vector2f(t - f) * movePercent;
+			curPos.y += headerSize;
 
 			text.setCharacterSize(getTextSize(moves[i].second));
 			text.setString(getText(moves[i].second));
@@ -168,7 +211,7 @@ namespace tw
 	}
 
 	sf::Color Game::getTileColor(char tile)
-	{
+	{	
 		static const sf::Color colors[] = {
 			sf::Color(238, 228, 218, 97),		// empty
 			sf::Color(238, 228, 218),			// 2^1 == 2
