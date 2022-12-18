@@ -9,35 +9,38 @@
 
 namespace tw
 {
-	class Game
-	{
-	public:
-		Game(int w, int h);
-		void OnEvent(sf::Event e);
-		void Update();
-		void Render(sf::RenderTarget& tgt);
+    class Game
+    {
+    public:
+        Game(int w, int h);
+        void OnEvent(sf::Event e);
+        void Update();
+        void Render(sf::RenderTarget& tgt);
 
-		void Spawn();
-		void Reset();
+        void Spawn();
+        void Reset();
 
-	private:
-		int tileSize;
-		int headerSize;
-		int mode; 		// 0 - 2048, 1 - school
-		char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
-		char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
-		sf::Clock animClock;
-		bool animState;
+    private:
+        int tileSize;
+        int headerSize;
+        int mode;         // 0 - 2048, 1 - school
+        char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
+        char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
+        sf::Clock animClock;
+        bool animState;
+        bool chanceYes;
+        bool destinyYes;
 
-		sf::Font font;
+        sf::Font font;
 
-		std::vector<std::pair<std::pair<sf::Vector2i, sf::Vector2i>, char>> moves;
+        std::vector<std::pair<std::pair<sf::Vector2i, sf::Vector2i>, char>> moves;
 
-		sf::Color getTileColor(char tile);
-		sf::Color getTextColor(char tile);
-		std::wstring getText(char tile);
-		int getTextSize(char tile);
-		void move(char dirX, char dirY);
-		void applyMove(sf::Vector2i from, sf::Vector2i to, int dx, int dy);
-	};
+        sf::Color getTileColor(char tile);
+        sf::Color getTextColor(char tile);
+        std::wstring getText(char tile);
+        int getTextSize(char tile);
+        void move(char dirX, char dirY);
+        void applyMove(sf::Vector2i from, sf::Vector2i to, int dx, int dy);
+        
+    };
 }
