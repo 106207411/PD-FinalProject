@@ -34,6 +34,7 @@ namespace gm
         bool animState;
         bool chanceYes;
         bool destinyYes;
+        bool isGameOver = false;
 
         sf::Font font;
 
