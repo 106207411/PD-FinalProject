@@ -3,7 +3,7 @@
 
 namespace mn
 {
-    const int MAX_ITEMS = 3;
+    const int MAX_ITEMS = 4;
     class Menu
     {
         private:
