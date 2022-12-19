@@ -116,23 +116,26 @@ namespace gm
                         }
                     }
                     else if ( t % 20 == 1 || t % 20 == 2 || t % 20 == 3 || t % 20 == 4 )
-                        // 所有數字除4 (機率 20%)
+                        // 所有數字乘 4 (機率 20%)
                     {
                         for (int x = 0; x < FIELD_WIDTH; x++)
                         {
                             for (int y = 0; y < FIELD_HEIGHT; y++)
                             {
+                                if ( map[x][y] < 9 )
+                                    map[x][y] += 2;
+                                else if ( map[x][y] == 12 || map[x][y] == 13 )
                                     map[x][y] = 0;
                             }
                         }
                     }
-                    else // 所有數字除2（若數字為2則變成空白）(機率 75%)
+                    else // 所有數字除 2（若數字為2則變成空白）(機率 75%)
                     {
                         for (int x = 0; x < FIELD_WIDTH; x++)
                         {
                             for (int y = 0; y < FIELD_HEIGHT; y++)
                             {
-                                if ( map[x][y] != 0 && map[x][y] != 12 &&  map[x][y] != 13 )
+                                if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
                                 {
                                     map[x][y] -= 1;
                                     tempMap[x][y] -= 1;
