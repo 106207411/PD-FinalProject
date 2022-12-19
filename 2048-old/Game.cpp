@@ -271,7 +271,7 @@ namespace gm
         {
             sf::Texture texture;
             sf::Sprite sprite;
-            texture.loadFromFile("./images/animals/LOSE_test.png");
+            texture.loadFromFile("./images/animals/LOSE.png");
             sprite.setTexture(texture);
             sprite.setPosition(0, 200);
             //sprite.setScale();
