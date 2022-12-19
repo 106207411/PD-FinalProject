@@ -27,14 +27,14 @@ namespace mn{
 
         menu[2].setFont(font);
         menu[2].setFillColor(sf::Color::White);
-        menu[2].setString("Exit");
+        menu[2].setString(L"動物森友會");
         menu[2].setCharacterSize(55);
         sf::FloatRect fr2 = menu[2].getLocalBounds();
         menu[2].setPosition(sf::Vector2f((width - fr2.width) / 2,height / (MAX_ITEMS + 1 ) * 3));
 
         menu[3].setFont(font);
         menu[3].setFillColor(sf::Color::White);
-        menu[3].setString(L"動物森友會");
+        menu[3].setString("Exit");
         menu[3].setCharacterSize(55);
         sf::FloatRect fr3 = menu[3].getLocalBounds();
         menu[3].setPosition(sf::Vector2f((width - fr3.width) / 2,height / (MAX_ITEMS + 1 ) * 4));
@@ -71,8 +71,6 @@ namespace mn{
     }
     void Menu::onEvent(sf::Event e, sf::RenderWindow &wnd, gm::Game &game)
     {
-        if (!menuOn)
-            game.OnEvent(e);
         if (e.type == sf::Event::KeyPressed)
         {
             if (e.key.code == sf::Keyboard::Up)
@@ -82,8 +80,8 @@ namespace mn{
             else if (e.key.code == sf::Keyboard::Return)
             {
                 int mode = getSelectItemsIndex();
-                (mode == 2) ? wnd.close() : game.setMode(mode);
-                menuOn = false;
+                (mode == 3) ? wnd.close() : game.setMode(mode);
+                setMenuState(false);
             }
         }
     }
@@ -92,6 +90,9 @@ namespace mn{
     }
     bool Menu::isOn(){
         return menuOn;
+    }
+    void Menu::setMenuState(bool on){
+        menuOn = on;
     }
 }
 ///////Menu END////////

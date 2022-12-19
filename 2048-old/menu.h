@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Game.h"
 
 namespace mn
 {
@@ -21,5 +22,6 @@ namespace mn
             void onEvent(sf::Event e, sf::RenderWindow &wnd, gm::Game &game);
             int getSelectItemsIndex();
             bool isOn();
+            void setMenuState(bool on);
     };
 }

@@ -8,6 +8,11 @@
 #include <SFML/Window/Event.hpp>
 #include <vector>
 
+namespace mn
+{
+    class Menu;
+}
+
 namespace gm
 {
     class Game
@@ -16,7 +21,7 @@ namespace gm
         Game(int w, int h);
         void setMode(int mode);
         int getMode();
-        void OnEvent(sf::Event e);
+        void OnEvent(sf::Event e, mn::Menu& menu);
         void Update();
         void Render(sf::RenderTarget& tgt);
 
@@ -31,6 +36,7 @@ namespace gm
         char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         sf::Clock animClock;
         sf::RectangleShape restartButton;
+        sf::RectangleShape menuButton;
         bool animState;
         bool chanceYes;
         bool destinyYes;
