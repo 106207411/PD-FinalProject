@@ -273,6 +273,17 @@ namespace gm
             }
         }
         
+        // gameover         
+        if (isGameOver)
+        {
+            sf::Texture texture;
+            sf::Sprite sprite;
+            texture.loadFromFile("./images/animals/LOSE_test.png");
+            sprite.setTexture(texture);
+            sprite.setPosition(0, 200);
+            //sprite.setScale();
+            tgt.draw(sprite);
+        }
 
         // animation
         sf::Vector2i fMargin(FIELD_MARGIN, FIELD_MARGIN);
@@ -560,7 +571,7 @@ namespace gm
         }
 
         bool isFilled = true;
-        bool isGameOver = true;
+        isGameOver = true;
         for (int x = 0; x < FIELD_WIDTH; x++) {
             for (int y = 0; y < FIELD_HEIGHT; y++) {
                 if (tempMap[x][y] == 0)
@@ -596,8 +607,10 @@ namespace gm
         char destVal = tempMap[t.x][t.y];
         tempMap[t.x][t.y] = (is_merge) ? srcVal+1 : srcVal;
         tempMap[f.x][f.y] = 0;
+        
         if ( f != t )
         {
+            
             if ( destVal == 12 )
             {
                 chanceYes = true;
@@ -615,16 +628,17 @@ namespace gm
                 tempMap[t.x][t.y] = 0;
             }
             else if ( destVal != 12 &&  destVal != 13 )
-            {
+            {   
+                /*
                 tempMap[t.x][t.y] = srcVal + 1;
                 if (srcVal + 1 == 12 ) Reset();
+                */
+                map[f.x][f.y] = 0;
+                moves.push_back(std::make_pair(std::make_pair(f, t), srcVal));
+
+                animState = true;
+                animClock.restart();
             }
-
-            map[f.x][f.y] = 0;
-            moves.push_back(std::make_pair(std::make_pair(f, t), srcVal));
-
-            animState = true;
-            animClock.restart();
         }
     }
 
