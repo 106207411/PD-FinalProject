@@ -108,7 +108,7 @@ namespace gm
                     {
                         for (int y = 0; y < FIELD_HEIGHT; y++)
                         {
-                            if ( map[x][y] != 0 && map[x][y] != 12 &&  map[x][y] != 13 )
+                            if ( map[x][y] != 0 && map[x][y] < 11 )
                             {
                                 map[x][y] += 1;
                                 tempMap[x][y] += 1;
@@ -141,7 +141,7 @@ namespace gm
                         {
                             for (int y = 0; y < FIELD_HEIGHT; y++)
                             {
-                                if ( map[x][y] < 9 )
+                                if ( map[x][y] < 9 && map[x][y] >= 1 )
                                     map[x][y] += 2;
                                 else if ( map[x][y] == 12 || map[x][y] == 13 )
                                     map[x][y] = 0;
@@ -154,7 +154,7 @@ namespace gm
                         {
                             for (int y = 0; y < FIELD_HEIGHT; y++)
                             {
-                                if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
+                                if ( map[x][y] != 0 && map[x][y] >= 1 ) //(10是1024)
                                 {
                                     map[x][y] -= 1;
                                     tempMap[x][y] -= 1;
