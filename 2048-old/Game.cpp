@@ -406,7 +406,7 @@ namespace gm
         bool is_merge = false;
         bool didShift = false;
 
-        if (dirY == -1) //上
+        if (dirY == -1) //上+
         {
             for (int x=0; x<FIELD_WIDTH; x++)
             {   
