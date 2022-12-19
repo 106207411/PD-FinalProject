@@ -2,6 +2,7 @@
 #include <deque>
 #include <unordered_map>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics.hpp>
 #include <iostream>
 
 int count = 0;  // 計算回合數
@@ -176,7 +177,10 @@ namespace gm
         title.setPosition( FIELD_MARGIN , FIELD_MARGIN );
         tgt.draw(title);
 
-        text.setString((getMode() == 0) ? L"2048原始版" : L"併校模擬器"); //L"GAME 2048"
+        if (getMode() == 0) text.setString(L"2048原始版");  //L"GAME 2048"
+        if (getMode() == 1) text.setString(L"併校模擬器");
+        if (getMode() == 3) text.setString(L"動物森友會");
+        
         sf::FloatRect fr = text.getLocalBounds();
         text.setPosition( FIELD_MARGIN , FIELD_MARGIN );
         text.setCharacterSize(55);
@@ -247,6 +251,23 @@ namespace gm
             }
         }
 
+        // mode=3, using animal images as tiles to replace numbers
+        if (getMode() == 3) {
+            sf::Texture texture;
+            sf::Sprite sprite;
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    texture.loadFromFile("./images/animals/" + std::to_string(map[x][y]) + ".png");
+                    sprite.setTexture(texture);
+                    sprite.setPosition(FIELD_MARGIN + x * (tileSize + TILE_MARGIN), headerSize + FIELD_MARGIN + y * (tileSize + TILE_MARGIN));
+                    sprite.setScale(tileSize / texture.getSize().x * 2, tileSize / texture.getSize().y * 2);
+                    tgt.draw(sprite);
+                }
+            }
+        }
+        
+
+        // animation
         sf::Vector2i fMargin(FIELD_MARGIN, FIELD_MARGIN);
 
         for (int i = 0; i < moves.size(); i++)
@@ -273,6 +294,7 @@ namespace gm
             tgt.draw(tile);
             tgt.draw(text);
         }
+
     }
 
     void Game::Spawn()
@@ -320,6 +342,8 @@ namespace gm
 
     sf::Color Game::getTileColor(char tile)
     {
+        if (getMode() == 3)
+            return sf::Color(238, 228, 218, 97);
         static const sf::Color colors[] =
         {
             sf::Color(238, 228, 218, 97),        // empty
@@ -343,6 +367,8 @@ namespace gm
 
     sf::Color Game::getTextColor(char tile)
     {
+        if (getMode() == 3)
+            return sf::Color(238, 228, 218, 97);
         if (tile >= 3) // tile >= 8 (cuz 2^3 == 8)
             return sf::Color(249, 246, 242);
         return sf::Color(119, 110, 101);
@@ -376,7 +402,7 @@ namespace gm
             L"華夏科大",
             L"真理大學",
             L"台灣大學",
-            L"台灣首府大學",
+            L"台灣首府\n大學",
             L"亞洲大學",
             L"北科",
             L"虎科",
