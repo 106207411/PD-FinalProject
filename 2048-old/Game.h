@@ -1,18 +1,20 @@
 #pragma once
 #include "Settings.h"
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <vector>
 
-namespace tw
+namespace gm
 {
     class Game
     {
     public:
         Game(int w, int h);
+        void setMode(int mode);
         void OnEvent(sf::Event e);
         void Update();
         void Render(sf::RenderTarget& tgt);
@@ -27,6 +29,7 @@ namespace tw
         char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         sf::Clock animClock;
+        sf::RectangleShape restartButton;
         bool animState;
         bool chanceYes;
         bool destinyYes;

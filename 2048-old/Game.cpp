@@ -6,32 +6,27 @@
 
 int count = 0;  // 計算回合數
 
-namespace tw
+namespace gm
 {
     Game::Game(int w, int h)
     {
         tileSize = (w - FIELD_MARGIN * 2 - TILE_MARGIN * (FIELD_WIDTH - 1)) / FIELD_WIDTH;
         headerSize = ( h - FIELD_MARGIN*2 - (TILE_MARGIN + tileSize) * (FIELD_HEIGHT));
         std::cout << "headerSize: " << headerSize << "\n";
-        mode = 0;
         animState = false;
-
-        if (mode == 0)  // 2048 版本
-        {
-            if (!font.loadFromFile("ClearSans.ttf"))
-                printf("Failed to load ClearSans.ttf\n");
-            if (!font.loadFromFile("./TaipeiSansTCBeta-Regular.ttf"))
-                printf("Failed to load TaipeiSansTCBeta-Regular.ttf\n");
-        }
-        else if (mode == 1)  // 學校 版本
-        {
-            if (!font.loadFromFile("./TaipeiSansTCBeta-Regular.ttf"))
-                printf("Failed to load TaipeiSansTCBeta-Regular.ttf\n");
-        }
+        chanceYes = false;
+        destinyYes = false;
 
         Reset();
     }
 
+    void Game::setMode(int mode)
+    {
+        this->mode = mode;
+        if (!font.loadFromFile("./TaipeiSansTCBeta-Bold.ttf"))
+            printf("Failed to load TaipeiSansTCBeta-Bold.ttf\n");
+    }
+    
     void Game::OnEvent(sf::Event e)
     {
         if (e.type == sf::Event::KeyPressed)
@@ -49,6 +44,14 @@ namespace tw
                 move(0, -1);
             else if (kc == sf::Keyboard::Down || kc == sf::Keyboard::S)
                 move(0, 1);
+        }
+        if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
+        {
+            // if mouse position is in the RectangleShape restart Button
+            if (restartButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
+            {
+                Reset();
+            }
         }
     }
 
@@ -143,8 +146,6 @@ namespace tw
                 }
                 destinyYes = false;
                 
-                
-                
                 Spawn();
 
                 return;
@@ -189,6 +190,7 @@ namespace tw
         restart.setSize(sf::Vector2f( tileSize * 1.5 + TILE_MARGIN , (headerSize / 2) - (TILE_MARGIN * 2) ));
         restart.setFillColor(sf::Color(143,123,102));
         restart.setPosition( FIELD_MARGIN + tileSize * 2.5 + TILE_MARGIN * 2, TILE_MARGIN * 3 + (headerSize / 2) );
+        this->restartButton = restart;
         tgt.draw(restart);
 
         text.setString(L"重新開始");
@@ -275,25 +277,15 @@ namespace tw
             return;
         }
 
+        sf::Vector2i newPos = availableMoves[rand() % availableCount];
+        char newTileID;
         if ( count % 50 == 0 && count != 0 )  // 每 50 回合會發一張機會/命運
-        {
-            sf::Vector2i newPos = availableMoves[rand() % availableCount];
-            char newTileID = (rand() % 2) == 0 ? 12 : 13;
-            
-            map[newPos.x][newPos.y] = newTileID ;
-            std::cout << "Spawned at " << newPos.x << " " << newPos.y << " with " << (int)newTileID << std::endl;
-            count++ ;
-        }
-            
+            newTileID = (rand() % 2) == 0 ? 12 : 13;
         else
-        {
-            sf::Vector2i newPos = availableMoves[rand() % availableCount];
-            char newTileID = (rand() % 10) < 9 ? 1 : 2;
-            
-            map[newPos.x][newPos.y] = newTileID ;
-            std::cout << "Spawned at " << newPos.x << " " << newPos.y << " with " << (int)newTileID << std::endl;
-            count++ ;
-        }
+            newTileID = (rand() % 10) < 9 ? 1 : 2;
+        
+        map[newPos.x][newPos.y] = newTileID;
+        count++ ;
     }
 
     void Game::Reset()
@@ -357,7 +349,8 @@ namespace tw
 
         // For chinese text, you need to use std:::wstring
         // https://www.sfml-dev.org/tutorials/2.5/graphics-text.php
-        static const std::wstring school[13] = {
+        static const std::wstring school[14] = {
+            L"",
             L"南台科大",
             L"中台科大",
             L"台北城市科大",

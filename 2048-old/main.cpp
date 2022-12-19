@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
+#include "menu.h"
+#include <iostream>
 
 int main()
 {
@@ -9,20 +11,25 @@ int main()
 	sf::Event e;
 
 	wnd.setKeyRepeatEnabled(false);
-
-	tw::Game game(wnd.getSize().x, wnd.getSize().y);
-
+	mn::Menu menu(wnd.getSize().x, wnd.getSize().y);
+	gm::Game game(wnd.getSize().x, wnd.getSize().y);
+	bool g_start = false;
+	bool g_win = false;
 	while (wnd.isOpen()) {
 		while (wnd.pollEvent(e)) {
 			if (e.type == sf::Event::Closed)
 				wnd.close();
-			game.OnEvent(e);
+			
+			menu.onEvent(e, wnd, game);
 		}
-
-		game.Update();
-
-		wnd.clear(sf::Color(187, 173, 160));
-		game.Render(wnd);
+		if (menu.isOn()) 
+            menu.draw(wnd);
+		else
+		{
+			game.Update();
+			wnd.clear(sf::Color(187, 173, 160));
+			game.Render(wnd);
+		}
 		wnd.display();
 	}
 

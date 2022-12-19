@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tw
+namespace gm
 {
 	const int FIELD_WIDTH = 4;
 	const int FIELD_HEIGHT = 4;
