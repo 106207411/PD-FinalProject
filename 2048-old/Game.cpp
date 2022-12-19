@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "menu.h"
 #include <deque>
 #include <unordered_map>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -33,7 +34,7 @@ namespace gm
         return this->mode;
     }
 
-    void Game::OnEvent(sf::Event e)
+    void Game::OnEvent(sf::Event e, mn::Menu& menu)
     {
         if (e.type == sf::Event::KeyPressed)
         {
@@ -57,6 +58,11 @@ namespace gm
             if (restartButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
             {
                 Reset();
+            }
+            // if mouse position is in the RectangleShape menu Button
+            if (menuButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
+            {
+                  menu.setMenuState(true);
             }
         }
     }
@@ -179,7 +185,7 @@ namespace gm
 
         if (getMode() == 0) text.setString(L"2048原始版");  //L"GAME 2048"
         if (getMode() == 1) text.setString(L"併校模擬器");
-        if (getMode() == 3) text.setString(L"動物森友會");
+        if (getMode() == 2) text.setString(L"動物森友會");
         
         sf::FloatRect fr = text.getLocalBounds();
         text.setPosition( FIELD_MARGIN , FIELD_MARGIN );
@@ -202,6 +208,7 @@ namespace gm
         return_btn.setSize(sf::Vector2f( tileSize * 0.5 , (headerSize / 2) - (TILE_MARGIN * 2) ));
         return_btn.setFillColor(sf::Color(143,123,102));
         return_btn.setPosition( FIELD_MARGIN + tileSize * 2 + TILE_MARGIN * 2, TILE_MARGIN * 3 + (headerSize / 2) );
+        this->menuButton = return_btn;
         tgt.draw(return_btn);
         text.setString("<<");
         text.setCharacterSize(30);
@@ -252,7 +259,7 @@ namespace gm
         }
 
         // mode=3, using animal images as tiles to replace numbers
-        if (getMode() == 3) {
+        if (getMode() == 2) {
             sf::Texture texture;
             sf::Sprite sprite;
             for (int x = 0; x < FIELD_WIDTH; x++) {
@@ -353,7 +360,7 @@ namespace gm
 
     sf::Color Game::getTileColor(char tile)
     {
-        if (getMode() == 3)
+        if (getMode() == 2)
             return sf::Color(238, 228, 218, 97);
         static const sf::Color colors[] =
         {
@@ -378,7 +385,7 @@ namespace gm
 
     sf::Color Game::getTextColor(char tile)
     {
-        if (getMode() == 3)
+        if (getMode() == 2)
             return sf::Color(238, 228, 218, 97);
         if (tile >= 3) // tile >= 8 (cuz 2^3 == 8)
             return sf::Color(249, 246, 242);

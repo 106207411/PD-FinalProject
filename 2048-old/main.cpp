@@ -17,8 +17,12 @@ int main()
 		while (wnd.pollEvent(e)) {
 			if (e.type == sf::Event::Closed)
 				wnd.close();
+
+			if (menu.isOn())
+				menu.onEvent(e, wnd, game);
+            else 
+				game.OnEvent(e, menu);
 			
-			menu.onEvent(e, wnd, game);
 		}
 		if (menu.isOn()) 
             menu.draw(wnd);
