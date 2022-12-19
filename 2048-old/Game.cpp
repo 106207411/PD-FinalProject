@@ -112,7 +112,18 @@ namespace tw
                             }
                         }
                     }
-                    else // 所有數字除2（若數字為2則變成空白）(機率 95%)
+                    else if ( t % 20 == 1 || t % 20 == 2 || t % 20 == 3 || t % 20 == 4 )
+                        // 所有數字除4 (機率 20%)
+                    {
+                        for (int x = 0; x < FIELD_WIDTH; x++)
+                        {
+                            for (int y = 0; y < FIELD_HEIGHT; y++)
+                            {
+                                    map[x][y] = 0;
+                            }
+                        }
+                    }
+                    else // 所有數字除2（若數字為2則變成空白）(機率 75%)
                     {
                         for (int x = 0; x < FIELD_WIDTH; x++)
                         {
