@@ -354,17 +354,17 @@ namespace gm
         // https://www.sfml-dev.org/tutorials/2.5/graphics-text.php
         static const std::wstring school[14] = {
             L"",
-            L"南台科大",
-            L"中台科大",
-            L"台北城市科大",
+            L"萬能科大",
+            L"華夏科大",
+            L"真理大學",
             L"台灣大學",
             L"台灣首府大學",
             L"亞洲大學",
-            L"屏科",
+            L"北科",
             L"虎科",
             L"雲科",
             L"台科",
-            L"開山科大"
+            L"大Ya大學",
             L"機會",
             L"命運"
         };
@@ -384,7 +384,7 @@ namespace gm
         }
         else if (mode==1)
         {
-            return 20;
+            return 25;
         }
     }
 
