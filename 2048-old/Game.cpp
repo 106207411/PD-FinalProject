@@ -213,7 +213,7 @@ namespace gm
 
         sf::RectangleShape return_btn;
         return_btn.setSize(sf::Vector2f( tileSize * 0.5 , (headerSize / 2) - (TILE_MARGIN * 2) ));
-        return_btn.setFillColor(sf::Color(143,123,102));
+        return_btn.setFillColor((isHover_menu) ? sf::Color(255, 255, 255) : sf::Color(143,123,102));
         return_btn.setPosition( FIELD_MARGIN + tileSize * 2 + TILE_MARGIN * 2, TILE_MARGIN * 3 + (headerSize / 2) );
         this->menuButton = return_btn;
         tgt.draw(return_btn);
@@ -221,12 +221,12 @@ namespace gm
         text.setCharacterSize(30);
         text.setStyle(sf::Text::Style::Regular);
         text.setPosition(FIELD_MARGIN + tileSize * 2 + TILE_MARGIN * 2.5, TILE_MARGIN * 3.5 + (headerSize / 2));
-        text.setFillColor(sf::Color(255, 255, 255));
+        text.setFillColor((isHover_menu) ? sf::Color(143,123,102) : sf::Color(255, 255, 255));
         tgt.draw(text);
 
         sf::RectangleShape restart;
         restart.setSize(sf::Vector2f( tileSize * 1.5  , (headerSize / 2) - (TILE_MARGIN * 2) ));
-        restart.setFillColor(sf::Color(143,123,102));
+        restart.setFillColor((isHover_restart) ? sf::Color(255, 255, 255) : sf::Color(143,123,102));
         restart.setPosition( FIELD_MARGIN + tileSize * 2.5 + TILE_MARGIN * 3, TILE_MARGIN * 3 + (headerSize / 2) );
         this->restartButton = restart;
         tgt.draw(restart);
@@ -237,7 +237,7 @@ namespace gm
         sf::FloatRect textRect = text.getLocalBounds();
         //text.setOrigin((tileSize * 1.5 + TILE_MARGIN - textRect.width) / 2 + textRect.left, ((headerSize / 2) - (TILE_MARGIN * 2) - textRect.height) / 2 + textRect.top);
         text.setPosition( FIELD_MARGIN + tileSize * 2.5 + TILE_MARGIN * 2 + (tileSize * 1.8 - textRect.width) / 2 + textRect.left , TILE_MARGIN * 3 + (headerSize / 2) + ((headerSize / 2) - (TILE_MARGIN * 2) - textRect.height) / 2);
-        text.setFillColor(sf::Color(255, 255, 255));
+        text.setFillColor((isHover_restart) ? sf::Color(143,123,102) : sf::Color(255, 255, 255));
         tgt.draw(text);
 
         //main

@@ -38,6 +38,8 @@ namespace gm
         sf::Clock animClock;
         sf::RectangleShape restartButton;
         sf::RectangleShape menuButton;
+        bool isHover_menu;
+        bool isHover_restart;
         bool animState;
         bool chanceYes;
         bool destinyYes;
