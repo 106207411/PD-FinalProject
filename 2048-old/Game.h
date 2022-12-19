@@ -19,13 +19,13 @@ namespace tw
 
         void Spawn();
         void Reset();
-
+        void coutMap();
     private:
         int tileSize;
         int headerSize;
         int mode;         // 0 - 2048, 1 - school
-        char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
+        char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         sf::Clock animClock;
         bool animState;
         bool chanceYes;
@@ -40,7 +40,7 @@ namespace tw
         std::wstring getText(char tile);
         int getTextSize(char tile);
         void move(char dirX, char dirY);
-        void applyMove(sf::Vector2i from, sf::Vector2i to, int dx, int dy);
-        
+        //void applyMove(sf::Vector2i from, sf::Vector2i to, int dx, int dy);
+        void tileMove(sf::Vector2i from, sf::Vector2i to, bool is_merge);
     };
 }
