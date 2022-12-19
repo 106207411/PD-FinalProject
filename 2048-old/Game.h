@@ -15,6 +15,7 @@ namespace gm
     public:
         Game(int w, int h);
         void setMode(int mode);
+        int getMode();
         void OnEvent(sf::Event e);
         void Update();
         void Render(sf::RenderTarget& tgt);

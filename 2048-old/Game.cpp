@@ -27,6 +27,11 @@ namespace gm
             printf("Failed to load TaipeiSansTCBeta-Bold.ttf\n");
     }
     
+    int Game::getMode()
+    {
+        return this->mode;
+    }
+
     void Game::OnEvent(sf::Event e)
     {
         if (e.type == sf::Event::KeyPressed)
@@ -171,7 +176,7 @@ namespace gm
         title.setPosition( FIELD_MARGIN , FIELD_MARGIN );
         tgt.draw(title);
 
-        text.setString(L"GAME 2048");
+        text.setString((getMode() == 0) ? L"2048原始版" : L"併校模擬器"); //L"GAME 2048"
         sf::FloatRect fr = text.getLocalBounds();
         text.setPosition( FIELD_MARGIN , FIELD_MARGIN );
         text.setCharacterSize(55);
@@ -198,6 +203,7 @@ namespace gm
 
         text.setString(L"重新開始");
         text.setCharacterSize(30);
+        text.setStyle(sf::Text::Style::Regular);
         sf::FloatRect textRect = text.getLocalBounds();
         //text.setOrigin((tileSize * 1.5 + TILE_MARGIN - textRect.width) / 2 + textRect.left, ((headerSize / 2) - (TILE_MARGIN * 2) - textRect.height) / 2 + textRect.top);
         text.setPosition( FIELD_MARGIN + tileSize * 2.5 + TILE_MARGIN * 2 + (tileSize * 1.5 + TILE_MARGIN - textRect.width) / 2 + textRect.left , TILE_MARGIN * 3 + (headerSize / 2) + ((headerSize / 2) - (TILE_MARGIN * 2) - textRect.height) / 2);
@@ -218,7 +224,7 @@ namespace gm
                 if (map[x][y] != 0) {
                     text.setCharacterSize(getTextSize(map[x][y]));
                     text.setString(getText(map[x][y]));
-
+                    text.setStyle(sf::Text::Style::Regular);
                     sf::FloatRect fr = text.getLocalBounds();
 
                     text.setPosition(FIELD_MARGIN + x * (tileSize + TILE_MARGIN) + (tileSize - fr.width) / 2 - fr.left, headerSize + FIELD_MARGIN + y * (tileSize + TILE_MARGIN) + (tileSize - fr.height) / 2 - fr.top);

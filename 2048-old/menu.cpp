@@ -12,29 +12,33 @@ namespace mn{
         }
 
         menu[0].setFont(font);
-        menu[0].setFillColor(sf::Color::Red);
-        menu[0].setString("Play");
-        menu[0].setCharacterSize(20);
-        menu[0].setPosition(sf::Vector2f(width/2,height/(MAX_ITEMS+1)*1));
+        menu[0].setFillColor(sf::Color(143,123,102));
+        menu[0].setString(L"2048原始版");
+        menu[0].setCharacterSize(55);
+        sf::FloatRect fr0 = menu[0].getLocalBounds();
+        menu[0].setPosition(sf::Vector2f((width - fr0.width) / 2 ,height / (MAX_ITEMS + 1 ) * 1));
 
         menu[1].setFont(font);
         menu[1].setFillColor(sf::Color::White);
-        menu[1].setString("Play Hard");
-        menu[1].setCharacterSize(20);
-        menu[1].setPosition(sf::Vector2f(width/2,height/(MAX_ITEMS+1)*2));
+        menu[1].setString(L"併校模擬器");
+        menu[1].setCharacterSize(55);
+        sf::FloatRect fr1 = menu[1].getLocalBounds();
+        menu[1].setPosition(sf::Vector2f((width - fr1.width) / 2, height / (MAX_ITEMS + 1) * 2));
 
         menu[2].setFont(font);
         menu[2].setFillColor(sf::Color::White);
         menu[2].setString("Exit");
-        menu[2].setCharacterSize(20);
-        menu[2].setPosition(sf::Vector2f(width/2,height/(MAX_ITEMS+1)*3));
+        menu[2].setCharacterSize(55);
+        sf::FloatRect fr2 = menu[2].getLocalBounds();
+        menu[2].setPosition(sf::Vector2f((width - fr2.width) / 2,height / (MAX_ITEMS + 1 ) * 3));
     }
 
     Menu::~Menu()
     {
     }
     void Menu::draw(sf::RenderWindow &window)
-    {
+    {   
+        window.clear(sf::Color(187, 173, 160));
         for (int i=0; i<MAX_ITEMS; i++)
         {
             window.draw(menu[i]);
@@ -46,7 +50,7 @@ namespace mn{
         {
             menu[selectItemsIndex].setFillColor(sf::Color::White);
             selectItemsIndex--;
-            menu[selectItemsIndex].setFillColor(sf::Color::Red);   
+            menu[selectItemsIndex].setFillColor(sf::Color(143,123,102));   
         }
     }
     void Menu::MoveDown()
@@ -55,7 +59,7 @@ namespace mn{
         {
             menu[selectItemsIndex].setFillColor(sf::Color::White);
             selectItemsIndex++;
-            menu[selectItemsIndex].setFillColor(sf::Color::Red);   
+            menu[selectItemsIndex].setFillColor(sf::Color(143,123,102)); 
         }
     }
     void Menu::onEvent(sf::Event e, sf::RenderWindow &wnd, gm::Game &game)

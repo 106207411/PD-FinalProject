@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-
 namespace mn
 {
     const int MAX_ITEMS = 3;
