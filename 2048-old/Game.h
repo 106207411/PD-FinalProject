@@ -44,7 +44,6 @@ namespace gm
         std::wstring getText(char tile);
         int getTextSize(char tile);
         void move(char dirX, char dirY);
-        // void applyMove(sf::Vector2i from, sf::Vector2i to, int dx, int dy);
         void tileMove(sf::Vector2i from, sf::Vector2i to, bool is_merge);
         
     };
