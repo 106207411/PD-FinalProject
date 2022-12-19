@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "Game_test.h"
 #include <deque>
 #include <unordered_map>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -79,6 +79,7 @@ namespace tw
                 
                 
                 // 機會：所有數字乘2，且場上所有機會、命運的都會消失
+                /*
                 if ( chanceYes )
                 {
                     for (int x = 0; x < FIELD_WIDTH; x++)
@@ -144,7 +145,7 @@ namespace tw
                     
                 }
                 destinyYes = false;
-                
+                */
                 Spawn();
 
                 return;
@@ -223,9 +224,10 @@ namespace tw
                 }
             }
         }
-
+    
         sf::Vector2i fMargin(FIELD_MARGIN, FIELD_MARGIN);
-
+        
+        //animation
         for (int i = 0; i < moves.size(); i++)
         {
             sf::Vector2i orig = moves[i].first.first;
@@ -392,93 +394,122 @@ namespace tw
         }
     }
 
-
-
     void Game::move(char dirX, char dirY)
-    {
+    {   
         // copy map
         for (int x = 0; x < FIELD_WIDTH; x++)
             for (int y = 0; y < FIELD_HEIGHT; y++)
                 tempMap[x][y] = map[x][y];
 
-        if (dirX == -1) // 左
+        bool is_merge = false;
+        bool didShift = false;
+
+        if (dirY == -1) //上
         {
-            for (int x = 1; x < FIELD_WIDTH; x++) {
-                for (int y = 0; y < FIELD_HEIGHT; y++) {
-                    if (tempMap[x][y] == 0)
-                        continue;
-
+            for (int x=0; x<FIELD_WIDTH; x++)
+            {   
+                for (int y=0; y<FIELD_HEIGHT-1; y++)
+                {   
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
-
-                    for (int mx = x - 1; mx >= 0; mx--) {
-                        finalPos = sf::Vector2i(mx, y);
-
-                        if (tempMap[mx][y] != 0)
+                    for (int y_move=y+1; y_move<FIELD_HEIGHT; y_move++)
+                    {
+                        if (tempMap[x][y_move] != 0){
+                            if (tempMap[x][y] != 0)
+                                if (tempMap[x][y_move] != tempMap[x][y])
+                                    break;
+                                else 
+                                    is_merge = true;
+                            tileMove(sf::Vector2i(x, y_move), finalPos, is_merge);
+                            didShift = true;
+                            if (!is_merge) y--;
+                            is_merge = false;
                             break;
+                        }
                     }
-
-                    applyMove(sf::Vector2i(x, y), finalPos, dirX, dirY);
                 }
             }
         }
-        else if (dirX == 1)  // 右
+        else if (dirX == -1) // 左
         {
-            for (int x = FIELD_WIDTH-2; x >= 0; x--) {
-                for (int y = 0; y < FIELD_HEIGHT; y++) {
-                    if (tempMap[x][y] == 0)
-                        continue;
-
+            for (int y=0; y<FIELD_HEIGHT; y++)
+            {   
+                for (int x=0; x<FIELD_WIDTH-1; x++)
+                {
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
-
-                    for (int mx = x + 1; mx < FIELD_WIDTH; mx++) {
-                        finalPos = sf::Vector2i(mx, y);
-
-                        if (tempMap[mx][y] != 0)
+                    for (int x_move=x+1; x_move<FIELD_WIDTH; x_move++) 
+                    {
+                        if (tempMap[x_move][y] != 0)
+                        {
+                            if (tempMap[x][y] != 0)
+                                if (tempMap[x_move][y] != tempMap[x][y])
+                                    break;
+                                else 
+                                    is_merge = true;
+                            tileMove(sf::Vector2i(x_move, y), finalPos, is_merge);
+                            didShift = true;
+                            if (!is_merge) x--;
+                            is_merge = false;
                             break;
+                        }
                     }
-                    applyMove(sf::Vector2i(x, y), finalPos, dirX, dirY);
                 }
             }
         }
-        else if (dirY == -1)  // 下
+        else if (dirY == 1) //下
         {
-            for (int y = 1; y < FIELD_HEIGHT; y++) {
-                for (int x = 0; x < FIELD_WIDTH; x++) {
-                    if (tempMap[x][y] == 0)
-                        continue;
-
+            for (int x=0; x<FIELD_WIDTH; x++)
+            {   
+                for (int y=FIELD_HEIGHT-1; y>0; y--)
+                {   
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
 
-                    for (int my = y - 1; my >= 0; my--) {
-                        finalPos = sf::Vector2i(x, my);
-
-                        if (tempMap[x][my] != 0)
+                    for (int y_move=y-1; y_move>=0; y_move--)
+                    {
+                        if (tempMap[x][y_move] != 0)
+                        {
+                            if (tempMap[x][y] != 0)
+                                if (tempMap[x][y_move] != tempMap[x][y])
+                                    break;
+                                else 
+                                    is_merge = true;
+                            tileMove(sf::Vector2i(x, y_move), finalPos, is_merge);
+                            didShift = true;
+                            if (!is_merge) y++;
+                            is_merge = false;
                             break;
+                        }
                     }
-
-                    applyMove(sf::Vector2i(x, y), finalPos, dirX, dirY);
                 }
             }
         }
-        else if (dirY == 1)  // 上
+        else if (dirX == 1) // 右
         {
-            for (int y = FIELD_HEIGHT-2; y >= 0; y--) {
-                for (int x = 0; x < FIELD_WIDTH; x++) {
-                    if (tempMap[x][y] == 0)
-                        continue;
-
+            for (int y=0; y<FIELD_HEIGHT; y++)
+            {   
+                for (int x=FIELD_WIDTH-1; x>0; x--)
+                {   
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
-
-                    for (int my = y + 1; my < FIELD_HEIGHT; my++) {
-                        finalPos = sf::Vector2i(x, my);
-
-                        if (tempMap[x][my] != 0)
+                    for (int x_move=x-1; x_move>=0; x_move--)
+                    {
+                        if (tempMap[x_move][y] != 0)
+                        {
+                            if (tempMap[x][y] != 0)
+                                if (tempMap[x_move][y] != tempMap[x][y])
+                                    break;
+                                else 
+                                    is_merge = true;
+                            tileMove(sf::Vector2i(x_move, y), finalPos, is_merge);
+                            didShift = true;
+                            if (!is_merge) x++;
+                            is_merge = false;
                             break;
+                        }
                     }
-
-                    applyMove(sf::Vector2i(x, y), finalPos, dirX, dirY);
                 }
             }
+        }
+    
+        if (didShift){ //移完之後的行動
         }
 
         bool isFilled = true;
@@ -509,11 +540,25 @@ namespace tw
         }
 
         if (isGameOver)
-            Reset();
+            Reset();   
+    }
+    
+    void Game::tileMove(sf::Vector2i f, sf::Vector2i t, bool is_merge)
+    {
+        char srcVal = tempMap[f.x][f.y];
+        tempMap[t.x][t.y] = (is_merge) ? srcVal+1 : srcVal;
+        tempMap[f.x][f.y] = 0;
+        if ( f != t )
+        {
+            map[f.x][f.y] = 0;
+            moves.push_back(std::make_pair(std::make_pair(f, t), srcVal));
+
+            animState = true;
+            animClock.restart();
+        }
     }
 
-
-
+    /*
     void Game::applyMove(sf::Vector2i f, sf::Vector2i t, int dx, int dy)
     {
         char srcVal = tempMap[f.x][f.y];
@@ -521,7 +566,6 @@ namespace tw
 
         tempMap[f.x][f.y] = 0;
 
-        /// 機會命運 ///
         if (destVal == srcVal)   // 若兩位置上的值一樣
         {
             if ( destVal == 12 )
@@ -550,7 +594,6 @@ namespace tw
             tempMap[t.x - (dx * (destVal != 0))][ t.y - (dy * (destVal != 0))] = srcVal;
 
         sf::Vector2i from = f, to;
-        /// 機會命運 ///
 
         if (destVal == srcVal)
             to = t;
@@ -566,6 +609,16 @@ namespace tw
             animState = true;
             animClock.restart();
         }
-    
+    }
+    */
+    void Game::coutMap() 
+    {
+        for (int a=0; a<FIELD_WIDTH; a++)
+            {
+                for (int b=0; b<FIELD_HEIGHT; b++)
+                    std::cout << (int)map[b][a] << " ";
+                std::cout << "\n";
+            }
+        std::cout << "\n";
     }
 }
