@@ -24,10 +24,8 @@ namespace gm
         void OnEvent(sf::Event e, mn::Menu& menu);
         void Update();
         void Render(sf::RenderTarget& tgt);
-
         void Spawn();
         void Reset();
-
     private:
         int tileSize;
         int headerSize;
@@ -37,6 +35,8 @@ namespace gm
         sf::Clock animClock;
         sf::RectangleShape restartButton;
         sf::RectangleShape menuButton;
+        bool isHover_menu;
+        bool isHover_restart;
         bool animState;
         bool chanceYes;
         bool destinyYes;
@@ -52,6 +52,6 @@ namespace gm
         int getTextSize(char tile);
         void move(char dirX, char dirY);
         void tileMove(sf::Vector2i from, sf::Vector2i to, bool is_merge);
-        
+
     };
 }
