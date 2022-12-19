@@ -21,17 +21,18 @@ namespace gm
         Game(int w, int h);
         void setMode(int mode);
         int getMode();
-        void OnEvent(sf::Event e, mn::Menu& menu);
-        void Update();
-        void Render(sf::RenderTarget& tgt);
+        void onEvent(sf::Event e, mn::Menu& menu);
+        void update();
+        void render(sf::RenderTarget& tgt);
 
-        void Spawn();
-        void Reset();
+        void spawn();
+        void reset();
 
     private:
         int tileSize;
         int headerSize;
         int mode;         // 0 - 2048, 1 - school
+        int gameRound;
         char map[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         char tempMap[FIELD_WIDTH][FIELD_HEIGHT] = { 0 };
         sf::Clock animClock;
@@ -40,7 +41,8 @@ namespace gm
         bool animState;
         bool chanceYes;
         bool destinyYes;
-        bool isGameOver = false;
+        bool isGameOver;
+        bool isGameWon;
 
         sf::Font font;
 

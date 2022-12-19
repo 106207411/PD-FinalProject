@@ -21,16 +21,16 @@ int main()
 			if (menu.isOn())
 				menu.onEvent(e, wnd, game);
             else 
-				game.OnEvent(e, menu);
+				game.onEvent(e, menu);
 			
 		}
 		if (menu.isOn()) 
             menu.draw(wnd);
 		else
 		{
-			game.Update();
+			game.update();
 			wnd.clear(sf::Color(187, 173, 160));
-			game.Render(wnd);
+			game.render(wnd);
 		}
 		wnd.display();
 	}

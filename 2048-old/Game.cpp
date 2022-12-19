@@ -6,7 +6,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-int count = 0;  // 計算回合數
 
 namespace gm
 {
@@ -15,15 +14,19 @@ namespace gm
         tileSize = (w - FIELD_MARGIN * 2 - TILE_MARGIN * (FIELD_WIDTH - 1)) / FIELD_WIDTH;
         headerSize = ( h - FIELD_MARGIN*2 - (TILE_MARGIN + tileSize) * (FIELD_HEIGHT));
         std::cout << "headerSize: " << headerSize << "\n";
+        gameRound = 0;  // 計算回合數
         animState = false;
         chanceYes = false;
         destinyYes = false;
+        isGameOver = false;
+        isGameWon = false;
 
-        Reset();
+        reset();
     }
 
     void Game::setMode(int mode)
     {
+        reset();
         this->mode = mode;
         if (!font.loadFromFile("./TaipeiSansTCBeta-Bold.ttf"))
             printf("Failed to load TaipeiSansTCBeta-Bold.ttf\n");
@@ -34,8 +37,25 @@ namespace gm
         return this->mode;
     }
 
-    void Game::OnEvent(sf::Event e, mn::Menu& menu)
+    void Game::onEvent(sf::Event e, mn::Menu& menu)
     {
+        if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
+        {
+            // if mouse position is in the RectangleShape restart Button
+            if (restartButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
+            {
+                reset();
+            }
+            // if mouse position is in the RectangleShape menu Button
+            if (menuButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
+            {
+                menu.setMenuState(true);
+            }
+        }
+
+        if (isGameOver || isGameWon)
+            return;
+
         if (e.type == sf::Event::KeyPressed)
         {
             if (animState)
@@ -52,22 +72,9 @@ namespace gm
             else if (kc == sf::Keyboard::Down || kc == sf::Keyboard::S)
                 move(0, 1);
         }
-        if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
-        {
-            // if mouse position is in the RectangleShape restart Button
-            if (restartButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
-            {
-                Reset();
-            }
-            // if mouse position is in the RectangleShape menu Button
-            if (menuButton.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
-            {
-                  menu.setMenuState(true);
-            }
-        }
     }
 
-    void Game::Update()
+    void Game::update()
     {
         if (animState)
         {
@@ -86,9 +93,9 @@ namespace gm
                     map[f.x][f.y] = 0;
 
                     if (srcVal == destVal && f != t && srcVal != 12 && srcVal != 13)
-                            map[t.x][t.y] = srcVal + 1;
+                        map[t.x][t.y] = srcVal + 1;
                     else
-                            map[t.x][t.y] = srcVal ;
+                        map[t.x][t.y] = srcVal ;
                 }
 
                 moves.clear();
@@ -161,7 +168,7 @@ namespace gm
                 }
                 destinyYes = false;
                 
-                Spawn();
+                spawn();
 
                 return;
             }
@@ -170,7 +177,7 @@ namespace gm
         }
     }
 
-    void Game::Render(sf::RenderTarget& tgt)
+    void Game::render(sf::RenderTarget& tgt)
     {
         sf::Text text;
         text.setFont(font);
@@ -285,6 +292,17 @@ namespace gm
             tgt.draw(sprite);
         }
 
+        // gamewon
+        if (isGameWon)
+        {
+            sf::Texture texture;
+            sf::Sprite sprite;
+            // texture.loadFromFile("./images/animals/WIN.png");
+            // sprite.setTexture(texture);
+            // sprite.setPosition(0, 200);
+            // tgt.draw(sprite);
+        }
+
         // animation
         sf::Vector2i fMargin(FIELD_MARGIN, FIELD_MARGIN);
 
@@ -315,7 +333,7 @@ namespace gm
 
     }
 
-    void Game::Spawn()
+    void Game::spawn()
     {
         int availableCount = 0;
         sf::Vector2i availableMoves[FIELD_WIDTH*FIELD_HEIGHT];
@@ -334,28 +352,33 @@ namespace gm
 
         if (availableCount == 0)
         {
-            Reset();
+            reset();
             return;
         }
 
         sf::Vector2i newPos = availableMoves[rand() % availableCount];
         char newTileID;
-        if ( count % 50 == 0 && count != 0 )  // 每 50 回合會發一張機會/命運
+        if ( gameRound % 2 == 0 && gameRound != 0 )  // 每 50 回合會發一張機會/命運
             newTileID = (rand() % 2) == 0 ? 12 : 13;
         else
             newTileID = (rand() % 10) < 9 ? 1 : 2;
         
         map[newPos.x][newPos.y] = newTileID;
-        count++ ;
+        gameRound++ ;
     }
 
-    void Game::Reset()
+    void Game::reset()
     {
         for (int x = 0; x < FIELD_WIDTH; x++)
             for (int y = 0; y < FIELD_HEIGHT; y++)
                 map[x][y] = 0;
-        count = 0;
-        Spawn();
+        gameRound = 0;
+        animState = false;
+        chanceYes = false;
+        destinyYes = false;
+        isGameOver = false;
+        isGameWon = false;
+        spawn();
     }
 
     sf::Color Game::getTileColor(char tile)
@@ -581,6 +604,14 @@ namespace gm
                     break;
                 }
 
+                // check is game won
+                if (tempMap[x][y] + 1 == 12)
+                {
+                    std::cout << (int)(tempMap[x][y]+1) << std::endl;
+                    isGameWon = true;
+                    return;
+                }
+
                 char val = tempMap[x][y];
 
                 if (x != 0 && tempMap[x - 1][y] == val)
@@ -597,8 +628,8 @@ namespace gm
                 break;
         }
 
-        if (isGameOver)
-            Reset();   
+        // if (isGameOver)
+        //     reset();   
     }
 
     void Game::tileMove(sf::Vector2i f, sf::Vector2i t, bool is_merge)
@@ -627,12 +658,13 @@ namespace gm
                 map[t.x][t.y] = 0;
                 tempMap[t.x][t.y] = 0;
             }
-            else if ( destVal != 12 &&  destVal != 13 )
+            if ( destVal != 12 &&  destVal != 13 )
             {   
                 /*
                 tempMap[t.x][t.y] = srcVal + 1;
                 if (srcVal + 1 == 12 ) Reset();
                 */
+
                 map[f.x][f.y] = 0;
                 moves.push_back(std::make_pair(std::make_pair(f, t), srcVal));
 
