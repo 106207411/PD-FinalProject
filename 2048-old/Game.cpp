@@ -285,7 +285,7 @@ namespace gm
         {
             sf::Texture texture;
             sf::Sprite sprite;
-            texture.loadFromFile("./images/animals/LOSE_test.png");
+            texture.loadFromFile("./images/animals/LOSE.png");
             sprite.setTexture(texture);
             sprite.setPosition(0, 200);
             //sprite.setScale();
@@ -628,7 +628,15 @@ namespace gm
                 break;
         }
 
-        // if (isGameOver)
+        if (isGameOver) 
+        {
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) 
+                    std::cout << (int)tempMap[x][y] << " ";
+                std::cout << std::endl;
+            }
+            
+        }
         //     reset();   
     }
 
