@@ -52,6 +52,21 @@ namespace gm
                 menu.setMenuState(true);
             }
         }
+        if (e.type == sf::Event::MouseMoved)
+        {   
+            isHover_restart = false;
+            isHover_menu = false;
+            // if mouse hover on the RectangleShape restart Button
+            if (restartButton.getGlobalBounds().contains(e.mouseMove.x, e.mouseMove.y))
+            {   
+                isHover_restart = true;
+            }
+            // if mouse hover on the RectangleShape menu Button
+            if (menuButton.getGlobalBounds().contains(e.mouseMove.x, e.mouseMove.y))
+            {
+                isHover_menu = true;
+            }
+        }
 
         if (isGameOver || isGameWon)
             return;
@@ -108,7 +123,7 @@ namespace gm
                     {
                         for (int y = 0; y < FIELD_HEIGHT; y++)
                         {
-                            if ( map[x][y] != 0 && map[x][y] < 11 )
+                            if ( map[x][y] != 0 && map[x][y] != 12 &&  map[x][y] != 13 )
                             {
                                 map[x][y] += 1;
                                 tempMap[x][y] += 1;
@@ -141,7 +156,7 @@ namespace gm
                         {
                             for (int y = 0; y < FIELD_HEIGHT; y++)
                             {
-                                if ( map[x][y] < 9 && map[x][y] >= 1 )
+                                if ( map[x][y] < 9 )
                                     map[x][y] += 2;
                                 else if ( map[x][y] == 12 || map[x][y] == 13 )
                                     map[x][y] = 0;
@@ -154,7 +169,7 @@ namespace gm
                         {
                             for (int y = 0; y < FIELD_HEIGHT; y++)
                             {
-                                if ( map[x][y] != 0 && map[x][y] >= 1 ) //(10是1024)
+                                if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
                                 {
                                     map[x][y] -= 1;
                                     tempMap[x][y] -= 1;
@@ -206,10 +221,14 @@ namespace gm
         score_board.setPosition( FIELD_MARGIN , FIELD_MARGIN + (headerSize / 2) );
         tgt.draw(score_board);
 
-        text.setString("2048");
-        text.setPosition( FIELD_MARGIN , FIELD_MARGIN + (headerSize / 2) );
-        text.setFillColor(sf::Color(255, 255, 255));
-        tgt.draw(text);
+        sf::Text textScore;
+        textScore.setFont(font);
+        textScore.setStyle(sf::Text::Style::Bold);
+        textScore.setString("2048");
+        textScore.setPosition( FIELD_MARGIN , FIELD_MARGIN + (headerSize / 2) );
+        textScore.setFillColor(sf::Color(255, 255, 255));
+        this->textScore = textScore;
+        tgt.draw(textScore);
 
         sf::RectangleShape return_btn;
         return_btn.setSize(sf::Vector2f( tileSize * 0.5 , (headerSize / 2) - (TILE_MARGIN * 2) ));

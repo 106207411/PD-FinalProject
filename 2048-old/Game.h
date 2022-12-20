@@ -38,6 +38,7 @@ namespace gm
         sf::Clock animClock;
         sf::RectangleShape restartButton;
         sf::RectangleShape menuButton;
+        sf::Text textScore;
         bool isHover_menu;
         bool isHover_restart;
         bool animState;
