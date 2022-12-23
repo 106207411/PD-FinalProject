@@ -110,13 +110,14 @@ namespace gm
 						map[t.x][t.y] = srcVal;
 				}
 
-                if (isdeletechanceAndDenstiny) // delete all chance and density
+                if (isdeletechanceAndDenstiny) // delete all chance and density and 障礙物
                 {
                     isdeletechanceAndDenstiny = false;
                     for (int x=0; x<FIELD_WIDTH; x++)
                         for (int y=0; y<FIELD_HEIGHT; y++)
-                            if ( map[x][y] == 12 || map[x][y] == 13 ) map[x][y] = 0;
+                            if ( map[x][y] >= 12 ) map[x][y] = 0;
                 } 
+
                 
 				moves.clear();
 
@@ -125,6 +126,50 @@ namespace gm
 				return;
 			}
 		}
+        
+        if (!isGameOver)
+        {
+            bool isFilled = true;
+            isGameOver = true;
+            for (int x = 0; x < FIELD_WIDTH; x++) {
+                for (int y = 0; y < FIELD_HEIGHT; y++) {
+                    if (map[x][y] == 0)
+                    {
+                        isFilled = false;
+                        isGameOver = false;
+                        break;
+                    }
+
+                    // check is game won
+                    if (map[x][y] + 1 == 12)
+                    {
+                        std::cout << (int)(map[x][y]+1) << std::endl;
+                        isGameWon = true;
+                        return;
+                    }
+
+                    char val = map[x][y];
+
+                    if (x != 0 && map[x - 1][y] == val)
+                        isGameOver = false;
+                    else if (y != 0 && map[x][y - 1] == val)
+                        isGameOver = false;
+                    else if (x != FIELD_WIDTH - 1 && map[x + 1][y] == val)
+                        isGameOver = false;
+                    else if (y != FIELD_HEIGHT - 1 && map[x][y+1] == val)
+                        isGameOver = false;
+                }
+
+                if (!isFilled || !isGameOver)
+                    break;
+            }
+
+            if (isGameOver) 
+            {
+                coutMap();
+            }
+            
+        }
 	}
 
 
@@ -447,7 +492,7 @@ namespace gm
             sf::Color(237, 194, 46),            // 2^11 == 2048
             sf::Color(240, 128, 128),            // 機會(12)
             sf::Color(112, 128, 144),            // 命運(13)
-            sf::Color(192, 115, 173)            // 障礙(13)
+            sf::Color(192, 115, 173)            // 障礙(14)
             
         };
         return colors[tile];
@@ -485,7 +530,7 @@ namespace gm
 
         // For chinese text, you need to use std:::wstring
         // https://www.sfml-dev.org/tutorials/2.5/graphics-text.php
-        static const std::wstring school[14] = {
+        static const std::wstring school[15] = {
             L"",
             L"萬能科大",
             L"華夏科大",
@@ -499,7 +544,9 @@ namespace gm
             L"台科",
             L"大Ya大學",
             L"機會",
-            L"命運"
+            L"命運",
+            L"障礙"           
+
         };
 
         return (mode==0) ? text[tile] : school[tile];
@@ -646,46 +693,7 @@ namespace gm
             chanceAndDestiny();
         }
 
-        bool isFilled = true;
-        isGameOver = true;
-        for (int x = 0; x < FIELD_WIDTH; x++) {
-            for (int y = 0; y < FIELD_HEIGHT; y++) {
-                if (tempMap[x][y] == 0)
-                {
-                    isFilled = false;
-                    isGameOver = false;
-                    break;
-                }
-
-                // check is game won
-                if (tempMap[x][y] + 1 == 12)
-                {
-                    std::cout << (int)(tempMap[x][y]+1) << std::endl;
-                    isGameWon = true;
-                    return;
-                }
-
-                char val = tempMap[x][y];
-
-                if (x != 0 && tempMap[x - 1][y] == val)
-                    isGameOver = false;
-                else if (y != 0 && tempMap[x][y - 1] == val)
-                    isGameOver = false;
-                else if (x != FIELD_WIDTH - 1 && tempMap[x + 1][y] == val)
-                    isGameOver = false;
-                else if (y != FIELD_HEIGHT - 1 && tempMap[x][y+1] == val)
-                    isGameOver = false;
-            }
-
-            if (!isFilled || !isGameOver)
-                break;
-        }
-
-        if (isGameOver) 
-        {
-            coutMap();
-            
-        }
+        
         //     reset();   
     }
 
@@ -700,14 +708,14 @@ namespace gm
             {
                 chanceYes = true;
                 tempMap[t.x][t.y] = 0;
-                map[t.x][t.y] = 0;
+                // map[t.x][t.y] = 0;
                 srcVal = 0;
             }
             else if ( destVal == 13 )
             {
                 destinyYes = true;
                 tempMap[t.x][t.y] = 0;
-                map[t.x][t.y] = 0;
+                // map[t.x][t.y] = 0;
                 srcVal = 0;
             }
             else 
@@ -736,11 +744,10 @@ namespace gm
             {
                 for (int y = 0; y < FIELD_HEIGHT; y++)
                 {
-                    if ( map[x][y] >= 12 )
+                    if ( tempMap[x][y] >= 12 )
                         break;
-                    if ( map[x][y] != 0)
+                    if ( tempMap[x][y] != 0)
                     {
-                        map[x][y] += 1;
                         tempMap[x][y] += 1;
                     }
                 }
@@ -759,7 +766,7 @@ namespace gm
                 {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {  
-                            map[x][y] = 0;
+                            tempMap[x][y] = 0;
                     }
                 }
             }
@@ -770,10 +777,10 @@ namespace gm
                 {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {   
-                        if ( map[x][y] >= 12 )
+                        if ( tempMap[x][y] >= 12 )
                             break;
-                        if ( map[x][y] != 0 && map[x][y] < 9 )
-                            map[x][y] += 2;
+                        if ( tempMap[x][y] != 0 && tempMap[x][y] < 9 )
+                            tempMap[x][y] += 2;
                     }
                 }
             }
@@ -783,11 +790,10 @@ namespace gm
                 {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {
-                        if ( map[x][y] >= 12 )
+                        if ( tempMap[x][y] >= 12 )
                             break;
-                        if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
+                        if ( tempMap[x][y] != 0 && tempMap[x][y] < 10 ) //(10是1024)
                         {
-                            map[x][y] -= 1;
                             tempMap[x][y] -= 1;
                         }
                     }
