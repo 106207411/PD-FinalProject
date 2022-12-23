@@ -689,14 +689,12 @@ namespace gm
             {
                 chanceYes = true;
                 tempMap[t.x][t.y] = 0;
-                // map[t.x][t.y] = 0;
                 srcVal = 0;
             }
             else if ( destVal == 13 )
             {
                 destinyYes = true;
                 tempMap[t.x][t.y] = 0;
-                // map[t.x][t.y] = 0;
                 srcVal = 0;
             }
             else 
