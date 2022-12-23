@@ -116,53 +116,50 @@ namespace gm
 
 				spawn();
 
+                if (!isGameOver)
+                {   
+                    bool isFilled = true;
+                    isGameOver = true;
+                    for (int x = 0; x < FIELD_WIDTH; x++) {
+                        for (int y = 0; y < FIELD_HEIGHT; y++) {
+                            // check is game won
+                            if (map[x][y] == 11)
+                            {
+                                std::cout << (int)(map[x][y]) << std::endl;
+                                isGameWon = true;
+                                return;
+                            }
+
+                            if (map[x][y] == 0)
+                            {
+                                isFilled = false;
+                                isGameOver = false;
+                            }
+
+                            char val = map[x][y];
+
+                            if (x != 0 && map[x - 1][y] == val)
+                                isGameOver = false;
+                            else if (y != 0 && map[x][y - 1] == val)
+                                isGameOver = false;
+                            else if (x != FIELD_WIDTH - 1 && map[x + 1][y] == val)
+                                isGameOver = false;
+                            else if (y != FIELD_HEIGHT - 1 && map[x][y+1] == val)
+                                isGameOver = false;
+                        }
+
+                        /*if (!isFilled || !isGameOver)
+                            break;*/
+                    }
+
+                    if (isGameOver) 
+                    {
+                        coutMap();
+                    }   
+                }
 				return;
 			}
 		}
-        
-        if (!isGameOver)
-        {
-            bool isFilled = true;
-            isGameOver = true;
-            for (int x = 0; x < FIELD_WIDTH; x++) {
-                for (int y = 0; y < FIELD_HEIGHT; y++) {
-                    if (map[x][y] == 0)
-                    {
-                        isFilled = false;
-                        isGameOver = false;
-                        break;
-                    }
-
-                    // check is game won
-                    if (map[x][y] + 1 == 12)
-                    {
-                        std::cout << (int)(map[x][y]+1) << std::endl;
-                        isGameWon = true;
-                        return;
-                    }
-
-                    char val = map[x][y];
-
-                    if (x != 0 && map[x - 1][y] == val)
-                        isGameOver = false;
-                    else if (y != 0 && map[x][y - 1] == val)
-                        isGameOver = false;
-                    else if (x != FIELD_WIDTH - 1 && map[x + 1][y] == val)
-                        isGameOver = false;
-                    else if (y != FIELD_HEIGHT - 1 && map[x][y+1] == val)
-                        isGameOver = false;
-                }
-
-                if (!isFilled || !isGameOver)
-                    break;
-            }
-
-            if (isGameOver) 
-            {
-                coutMap();
-            }
-            
-        }
 	}
 
 
