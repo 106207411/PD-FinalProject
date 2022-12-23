@@ -361,7 +361,7 @@ namespace gm
 
         if ( (rand() % 4) == 0 && gameRound != 0 ) // each random n round
         {    
-            int t = rand() % 4; // 3 situations
+            int t = rand() % 3; // 3 situations
             if ( t == 0 ) // chance
             {
                 int discnt = 0;
@@ -441,7 +441,7 @@ namespace gm
                         }
                     }
                 }
-                newTileID = ( rand() % 3 == 0 ) ? 14 : 0;
+                newTileID = ( rand() % 3 == 0 ) ? 14 : 1;
             }
         }
         else
@@ -543,9 +543,9 @@ namespace gm
             L"雲科",
             L"台科",
             L"大Ya大學",
-            L"機會",
-            L"命運",
-            L"障礙"           
+            L"深耕2.0",
+            L"社會責任",
+            L"學歷貶值"           
 
         };
 
