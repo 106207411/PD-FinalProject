@@ -109,13 +109,15 @@ namespace gm
 					else
 						map[t.x][t.y] = srcVal;
 				}
-                if (isdeletechanceAndDenstiny)
+
+                if (isdeletechanceAndDenstiny) // delete all chance and density
                 {
                     isdeletechanceAndDenstiny = false;
                     for (int x=0; x<FIELD_WIDTH; x++)
                         for (int y=0; y<FIELD_HEIGHT; y++)
                             if ( map[x][y] == 12 || map[x][y] == 13 ) map[x][y] = 0;
-                }
+                } 
+                
 				moves.clear();
 
 				spawn();
@@ -311,10 +313,101 @@ namespace gm
 
         sf::Vector2i newPos = availableMoves[rand() % availableCount];
         char newTileID;
-        if ( (rand() % 4) == 0 && gameRound != 0 )  // 每 random 回合會發一張機會/命運
-            newTileID = (rand() % 2) == 0 ? 12 : 13;
+
+        if ( (rand() % 4) == 0 && gameRound != 0 ) // each random n round
+        {    
+            int t = rand() % 4; // 3 situations
+            if ( t == 0 ) // chance
+            {
+                int discnt = 0;
+                for (int k=0; k< FIELD_HEIGHT; k++)
+                {
+                    for ( int h=0 ; h < FIELD_WIDTH ; h++)
+                    {
+                        if ( map[h][k] == 12 )
+                            discnt++;
+                    }
+                }
+                if(discnt >= 2)
+                {
+                    for (int k=0; k < FIELD_HEIGHT; k++)
+                    {
+                        for ( int h=0 ; h < FIELD_WIDTH ; h++)
+                        {
+                            if ( map[h][k] == 12 )
+                            {
+                                map[h][k] = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                newTileID = 12;
+            } 
+            else if ( t == 1 ) // density
+            {
+                int discnt = 0;
+                for (int k=0; k < FIELD_HEIGHT; k++)
+                {
+                    for ( int h=0 ; h < FIELD_WIDTH ; h++)
+                    {
+                        if ( map[h][k] == 13 )
+                            discnt++;
+                    }
+                }
+                if(discnt >= 2)
+                {
+                    for (int k=0; k < FIELD_HEIGHT; k++)
+                    {
+                        for ( int h=0 ; h < FIELD_WIDTH ; h++)
+                        {
+                            if ( map[h][k] == 13 )
+                            {
+                                map[h][k] = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                newTileID = 13;
+            }
+            else if ( t == 2 ) // block
+            {
+                int discnt = 0;
+                for (int k=0; k < FIELD_HEIGHT; k++)
+                {
+                    for ( int h=0 ; h < FIELD_WIDTH ; h++)
+                    {
+                        if ( map[h][k] == 14 )
+                            discnt++;
+                    }
+                }
+                if (discnt >= 1)
+                {
+                    for (int k=0; k < FIELD_HEIGHT; k++)
+                    {
+                        for ( int h=0 ; h < FIELD_WIDTH ; h++)
+                        {
+                            if ( map[h][k] == 14 )
+                            {
+                                map[h][k] = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                newTileID = ( rand() % 3 == 0 ) ? 14 : 0;
+            }
+        }
         else
-            newTileID = (rand() % 10) < 9 ? 1 : 2;
+        {   
+            // normal assign
+            int t = rand() % 3;
+            if ( t==0 || t==1 )
+                newTileID = 1;
+            else
+                newTileID = 2;
+        }
         
         map[newPos.x][newPos.y] = newTileID;
         gameRound++ ;
@@ -353,7 +446,8 @@ namespace gm
             sf::Color(237, 197, 63),            // 2^10 == 1024
             sf::Color(237, 194, 46),            // 2^11 == 2048
             sf::Color(240, 128, 128),            // 機會(12)
-            sf::Color(112, 128, 144)            // 命運(13)
+            sf::Color(112, 128, 144),            // 命運(13)
+            sf::Color(192, 115, 173)            // 障礙(13)
             
         };
         return colors[tile];
@@ -371,7 +465,7 @@ namespace gm
     std::wstring Game::getText(char tile)
     {
         // this is small optimization - we dont have to use pow()
-        static const std::wstring text[14] = {
+        static const std::wstring text[15] = {
             L"",                // empty
             L"2",            // 2^1 == 2
             L"4",            // 2^2 == 4
@@ -384,8 +478,9 @@ namespace gm
             L"512",            // 2^9 == 512
             L"1024",            // 2^10 == 1024
             L"2048",            // 2^11 == 2048
-            L"機會",
-            L"命運"
+            L"機會",            // 12
+            L"命運",            // 13
+            L"障礙"            // 14
         };
 
         // For chinese text, you need to use std:::wstring
@@ -447,6 +542,7 @@ namespace gm
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
                     for (int y_move=y+1; y_move<FIELD_HEIGHT; y_move++)
                     {
+                        if ( tempMap[x][y_move] == 14 ) break;
                         if (tempMap[x][y_move] != 0){
                             if (tempMap[x][y] != 0)
                                 if (tempMap[x][y_move] != tempMap[x][y])
@@ -472,6 +568,7 @@ namespace gm
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
                     for (int x_move=x+1; x_move<FIELD_WIDTH; x_move++) 
                     {
+                        if ( tempMap[x_move][y] == 14 ) break;
                         if (tempMap[x_move][y] != 0)
                         {
                             if (tempMap[x][y] != 0)
@@ -499,6 +596,7 @@ namespace gm
 
                     for (int y_move=y-1; y_move>=0; y_move--)
                     {
+                        if ( tempMap[x][y_move] == 14 ) break;
                         if (tempMap[x][y_move] != 0)
                         {
                             if (tempMap[x][y] != 0)
@@ -525,6 +623,7 @@ namespace gm
                     sf::Vector2i finalPos = sf::Vector2i(x, y);
                     for (int x_move=x-1; x_move>=0; x_move--)
                     {
+                        if ( tempMap[x_move][y] == 14 ) break;
                         if (tempMap[x_move][y] != 0)
                         {
                             if (tempMap[x][y] != 0)
@@ -637,7 +736,7 @@ namespace gm
             {
                 for (int y = 0; y < FIELD_HEIGHT; y++)
                 {
-                    if ( map[x][y] == 12 || map[x][y] == 13 )
+                    if ( map[x][y] >= 12 )
                         break;
                     if ( map[x][y] != 0)
                     {
@@ -671,7 +770,7 @@ namespace gm
                 {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {   
-                        if ( map[x][y] == 12 || map[x][y] == 13 )
+                        if ( map[x][y] >= 12 )
                             break;
                         if ( map[x][y] != 0 && map[x][y] < 9 )
                             map[x][y] += 2;
@@ -684,7 +783,7 @@ namespace gm
                 {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {
-                        if ( map[x][y] == 12 || map[x][y] == 13 )
+                        if ( map[x][y] >= 12 )
                             break;
                         if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
                         {
