@@ -47,6 +47,7 @@ namespace gm
         bool destinyYes;
         bool isGameOver;
         bool isGameWon;
+        bool isdeletechanceAndDenstiny;
 
         sf::Font font;
 
@@ -59,6 +60,5 @@ namespace gm
         void move(char dirX, char dirY);
         void tileMove(sf::Vector2i from, sf::Vector2i to, bool is_merge);
         void chanceAndDestiny(); //機會與命運
-        void deletechanceAndDenstiny(); //清掉機會與命運
     };
 }

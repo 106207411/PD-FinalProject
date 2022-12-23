@@ -105,11 +105,17 @@ namespace gm
 					map[f.x][f.y] = 0;
 
 					if (srcVal == destVal)
-                        map[t.x][t.y] = (srcVal == 12 || srcVal == 13) ? 0: srcVal + 1;
+                        map[t.x][t.y] = srcVal + 1;
 					else
 						map[t.x][t.y] = srcVal;
 				}
-
+                if (isdeletechanceAndDenstiny)
+                {
+                    isdeletechanceAndDenstiny = false;
+                    for (int x=0; x<FIELD_WIDTH; x++)
+                        for (int y=0; y<FIELD_HEIGHT; y++)
+                            if ( map[x][y] == 12 || map[x][y] == 13 ) map[x][y] = 0;
+                }
 				moves.clear();
 
 				spawn();
@@ -599,12 +605,14 @@ namespace gm
             {
                 chanceYes = true;
                 tempMap[t.x][t.y] = 0;
+                map[t.x][t.y] = 0;
                 srcVal = 0;
             }
             else if ( destVal == 13 )
             {
                 destinyYes = true;
                 tempMap[t.x][t.y] = 0;
+                map[t.x][t.y] = 0;
                 srcVal = 0;
             }
             else 
@@ -642,7 +650,7 @@ namespace gm
                     }
                 }
             }
-            deletechanceAndDenstiny();
+            isdeletechanceAndDenstiny = true;
             chanceYes = false;
         }
         
@@ -690,16 +698,9 @@ namespace gm
                     }
                 }
             }
-            deletechanceAndDenstiny();
+            isdeletechanceAndDenstiny = true;
             destinyYes = false;   
         }
-    }
-
-    void Game::deletechanceAndDenstiny()
-    {
-        for (int x=0; x<FIELD_WIDTH; x++)
-            for (int y=0; y<FIELD_HEIGHT; y++)
-                if ( map[x][y] == 12 || map[x][y] == 13) map[x][y] = 0;
     }
 
     void Game::coutMap()
