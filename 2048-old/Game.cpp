@@ -93,6 +93,8 @@ namespace gm
 	{
 		if (animState) {
 			if (animClock.getElapsedTime().asSeconds() >= ANIMATION_DURATION) {
+                chanceAndDestiny();            // chance and destiny effect
+                
 				animState = false;
 
 				for (int i = 0; i < moves.size(); i++) {
@@ -109,15 +111,6 @@ namespace gm
 					else
 						map[t.x][t.y] = srcVal;
 				}
-
-                if (isdeletechanceAndDenstiny) // delete all chance and density and 障礙物
-                {
-                    isdeletechanceAndDenstiny = false;
-                    for (int x=0; x<FIELD_WIDTH; x++)
-                        for (int y=0; y<FIELD_HEIGHT; y++)
-                            if ( map[x][y] >= 12 ) map[x][y] = 0;
-                } 
-
                 
 				moves.clear();
 
@@ -578,7 +571,6 @@ namespace gm
                 tempMap[x][y] = map[x][y];
 
         bool is_merge = false;
-        bool didShift = false;
 
         if (dirY == -1) //上
         {
@@ -597,7 +589,6 @@ namespace gm
                                 else 
                                     is_merge = true;
                             tileMove(sf::Vector2i(x, y_move), finalPos, is_merge);
-                            didShift = true;
                             if (!is_merge) y--;
                             is_merge = false;
                             break;
@@ -624,7 +615,6 @@ namespace gm
                                 else 
                                     is_merge = true;
                             tileMove(sf::Vector2i(x_move, y), finalPos, is_merge);
-                            didShift = true;
                             if (!is_merge) x--;
                             is_merge = false;
                             break;
@@ -652,7 +642,6 @@ namespace gm
                                 else 
                                     is_merge = true;
                             tileMove(sf::Vector2i(x, y_move), finalPos, is_merge);
-                            didShift = true;
                             if (!is_merge) y++;
                             is_merge = false;
                             break;
@@ -679,7 +668,6 @@ namespace gm
                                 else 
                                     is_merge = true;
                             tileMove(sf::Vector2i(x_move, y), finalPos, is_merge);
-                            didShift = true;
                             if (!is_merge) x++;
                             is_merge = false;
                             break;
@@ -688,13 +676,6 @@ namespace gm
                 }
             }
         }
-    
-        if (didShift){ //移完之後的行動
-            chanceAndDestiny();
-        }
-
-        
-        //     reset();   
     }
 
     void Game::tileMove(sf::Vector2i f, sf::Vector2i t, bool is_merge)
@@ -741,17 +722,13 @@ namespace gm
         if ( chanceYes )
         {
             for (int x = 0; x < FIELD_WIDTH; x++)
-            {
                 for (int y = 0; y < FIELD_HEIGHT; y++)
                 {
                     if ( tempMap[x][y] >= 12 )
                         break;
                     if ( tempMap[x][y] != 0)
-                    {
-                        tempMap[x][y] += 1;
-                    }
+                        map[x][y] += 1;
                 }
-            }
             isdeletechanceAndDenstiny = true;
             chanceYes = false;
         }
@@ -763,45 +740,44 @@ namespace gm
             if ( t % 20 == 0 ) // 炸彈，清空所有空格 (機率 5%)
             {
                 for (int x = 0; x < FIELD_WIDTH; x++)
-                {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
-                    {  
-                            tempMap[x][y] = 0;
-                    }
-                }
+                        map[x][y] = 0;
             }
             else if ( t % 20 == 1 || t % 20 == 2 || t % 20 == 3 || t % 20 == 4 )
             // 所有數字乘 4 (機率 20%)
             {
                 for (int x = 0; x < FIELD_WIDTH; x++)
-                {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {   
                         if ( tempMap[x][y] >= 12 )
                             break;
                         if ( tempMap[x][y] != 0 && tempMap[x][y] < 9 )
-                            tempMap[x][y] += 2;
+                            map[x][y] += 2;
                     }
-                }
             }
             else // 所有數字除 2（若數字為2則變成空白）(機率 75%)
             {
                 for (int x = 0; x < FIELD_WIDTH; x++)
-                {
                     for (int y = 0; y < FIELD_HEIGHT; y++)
                     {
                         if ( tempMap[x][y] >= 12 )
                             break;
                         if ( tempMap[x][y] != 0 && tempMap[x][y] < 10 ) //(10是1024)
-                        {
-                            tempMap[x][y] -= 1;
-                        }
+                            map[x][y] -= 1;
                     }
-                }
             }
             isdeletechanceAndDenstiny = true;
             destinyYes = false;   
         }
+        
+        // delete all chance and density and 障礙物
+        if (isdeletechanceAndDenstiny) 
+        {
+            isdeletechanceAndDenstiny = false;
+            for (int x=0; x<FIELD_WIDTH; x++)
+                for (int y=0; y<FIELD_HEIGHT; y++)
+                    if ( map[x][y] >= 12 ) map[x][y] = 0;
+        } 
     }
 
     void Game::coutMap()
@@ -814,57 +790,4 @@ namespace gm
         }
     std::cout << "\n";
     }
-
-    // void Game::applyMove(sf::Vector2i f, sf::Vector2i t, int dx, int dy)
-    // {
-    //     char srcVal = tempMap[f.x][f.y];
-    //     char destVal = tempMap[t.x][t.y];
-
-    //     tempMap[f.x][f.y] = 0;
-
-    //     if (destVal == srcVal)   // 若兩位置上的值一樣
-    //     {
-    //         if ( destVal == 12 )
-    //         {
-    //             chanceYes = true;
-    //             map[f.x][f.y] = 0;
-    //             tempMap[f.x][f.y] = 0;
-    //             map[t.x][t.y] = 0;
-    //             tempMap[t.x][t.y] = 0;
-    //         }
-    //         if ( destVal == 13 )
-    //         {
-    //             destinyYes = true;
-    //             map[f.x][f.y] = 0;
-    //             tempMap[f.x][f.y] = 0;
-    //             map[t.x][t.y] = 0;
-    //             tempMap[t.x][t.y] = 0;
-    //         }
-    //         else if ( destVal != 12 &&  destVal != 13 )
-    //         {
-    //             tempMap[t.x][t.y] = srcVal + 1;
-    //             if (srcVal + 1 == 12 ) Reset();
-    //         }
-    //     }
-    //     else
-    //         tempMap[t.x - (dx * (destVal != 0))][ t.y - (dy * (destVal != 0))] = srcVal;
-
-    //     sf::Vector2i from = f, to;
-
-    //     if (destVal == srcVal)
-    //         to = t;
-    //     else
-    //         to = sf::Vector2i(t.x - (dx * (destVal != 0)), t.y - (dy * (destVal != 0)));
-
-    //     if (from != to )
-    //     {
-    //         map[f.x][f.y] = 0;
-
-    //         moves.push_back(std::make_pair(std::make_pair(from, to), srcVal));
-
-    //         animState = true;
-    //         animClock.restart();
-    //     }
-    
-    // }
 }
