@@ -250,10 +250,10 @@ namespace gm
         {
             sf::Texture texture;
             sf::Sprite sprite;
-            // texture.loadFromFile("./images/animals/WIN.png");
-            // sprite.setTexture(texture);
-            // sprite.setPosition(0, 200);
-            // tgt.draw(sprite);
+            texture.loadFromFile("./images/animals/WIN.png");
+            sprite.setTexture(texture);
+            sprite.setPosition(0, 200);
+            tgt.draw(sprite);
         }
 
         // animation
@@ -584,11 +584,7 @@ namespace gm
 
         if (isGameOver) 
         {
-            for (int x = 0; x < FIELD_WIDTH; x++) {
-                for (int y = 0; y < FIELD_HEIGHT; y++) 
-                    std::cout << (int)tempMap[x][y] << " ";
-                std::cout << std::endl;
-            }
+            coutMap();
             
         }
         //     reset();   
