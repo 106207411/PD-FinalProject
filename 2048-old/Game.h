@@ -27,6 +27,7 @@ namespace gm
 
         void spawn();
         void reset();
+        void coutMap();
 
     private:
         int tileSize;
@@ -57,6 +58,7 @@ namespace gm
         int getTextSize(char tile);
         void move(char dirX, char dirY);
         void tileMove(sf::Vector2i from, sf::Vector2i to, bool is_merge);
-        
+        void chanceAndDestiny(); //機會與命運
+        void deletechanceAndDenstiny(); //清掉機會與命運
     };
 }

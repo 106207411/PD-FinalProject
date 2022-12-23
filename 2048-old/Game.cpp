@@ -13,7 +13,7 @@ namespace gm
     {
         tileSize = (w - FIELD_MARGIN * 2 - TILE_MARGIN * (FIELD_WIDTH - 1)) / FIELD_WIDTH;
         headerSize = ( h - FIELD_MARGIN*2 - (TILE_MARGIN + tileSize) * (FIELD_HEIGHT));
-        std::cout << "headerSize: " << headerSize << "\n";
+
         gameRound = 0;  // 計算回合數
         animState = false;
         chanceYes = false;
@@ -89,108 +89,36 @@ namespace gm
         }
     }
 
-    void Game::update()
-    {
-        if (animState)
-        {
-            if (animClock.getElapsedTime().asSeconds() >= ANIMATION_DURATION)
-            {
-                animState = false;
+  	void Game::update()
+	{
+		if (animState) {
+			if (animClock.getElapsedTime().asSeconds() >= ANIMATION_DURATION) {
+				animState = false;
 
-                for (int i = 0; i < moves.size(); i++)
-                {
-                    sf::Vector2i f = moves[i].first.first;
-                    sf::Vector2i t = moves[i].first.second;
+				for (int i = 0; i < moves.size(); i++) {
+					sf::Vector2i f = moves[i].first.first;
+					sf::Vector2i t = moves[i].first.second;
 
-                    char srcVal = moves[i].second;
-                    char destVal = map[t.x][t.y];
+					char srcVal = moves[i].second;
+					char destVal = map[t.x][t.y];
 
-                    map[f.x][f.y] = 0;
+					map[f.x][f.y] = 0;
 
-                    if (srcVal == destVal && f != t && srcVal != 12 && srcVal != 13)
-                        map[t.x][t.y] = srcVal + 1;
-                    else
-                        map[t.x][t.y] = srcVal ;
-                }
+					if (srcVal == destVal)
+                        map[t.x][t.y] = (srcVal == 12 || srcVal == 13) ? 0: srcVal + 1;
+					else
+						map[t.x][t.y] = srcVal;
+				}
 
-                moves.clear();
-                
-                
-                // 機會：所有數字乘2，且場上所有機會、命運的都會消失
-                if ( chanceYes )
-                {
-                    for (int x = 0; x < FIELD_WIDTH; x++)
-                    {
-                        for (int y = 0; y < FIELD_HEIGHT; y++)
-                        {
-                            if ( map[x][y] != 0 && map[x][y] != 12 &&  map[x][y] != 13 )
-                            {
-                                map[x][y] += 1;
-                                tempMap[x][y] += 1;
-                            }
-                            if ( map[x][y] == 12 || map[x][y] == 13 )
-                                map[x][y] = 0;
-                        }
-                    }
-                }
-                chanceYes = false;
-                
-                // 命運：所有數字除 2 or 炸彈 (清空所有數字)，且場上所有的機會、命運都會消失
-                if ( destinyYes )
-                {
-                    int t = rand() ;
-                    if ( t % 20 == 0 ) // 炸彈，清空所有空格 (機率 5%)
-                    {
-                        for (int x = 0; x < FIELD_WIDTH; x++)
-                        {
-                            for (int y = 0; y < FIELD_HEIGHT; y++)
-                            {
-                                    map[x][y] = 0;
-                            }
-                        }
-                    }
-                    else if ( t % 20 == 1 || t % 20 == 2 || t % 20 == 3 || t % 20 == 4 )
-                        // 所有數字乘 4 (機率 20%)
-                    {
-                        for (int x = 0; x < FIELD_WIDTH; x++)
-                        {
-                            for (int y = 0; y < FIELD_HEIGHT; y++)
-                            {
-                                if ( map[x][y] < 9 )
-                                    map[x][y] += 2;
-                                else if ( map[x][y] == 12 || map[x][y] == 13 )
-                                    map[x][y] = 0;
-                            }
-                        }
-                    }
-                    else // 所有數字除 2（若數字為2則變成空白）(機率 75%)
-                    {
-                        for (int x = 0; x < FIELD_WIDTH; x++)
-                        {
-                            for (int y = 0; y < FIELD_HEIGHT; y++)
-                            {
-                                if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
-                                {
-                                    map[x][y] -= 1;
-                                    tempMap[x][y] -= 1;
-                                }
-                                else if ( map[x][y] == 12 || map[x][y] == 13 )
-                                    map[x][y] = 0;
-                            }
-                        }
-                    }
-                    
-                }
-                destinyYes = false;
-                
-                spawn();
+				moves.clear();
 
-                return;
-            }
+				spawn();
 
+				return;
+			}
+		}
+	}
 
-        }
-    }
 
     void Game::render(sf::RenderTarget& tgt)
     {
@@ -377,7 +305,7 @@ namespace gm
 
         sf::Vector2i newPos = availableMoves[rand() % availableCount];
         char newTileID;
-        if ( gameRound % 2 == 0 && gameRound != 0 )  // 每 50 回合會發一張機會/命運
+        if ( (rand() % 4) == 0 && gameRound != 0 )  // 每 random 回合會發一張機會/命運
             newTileID = (rand() % 2) == 0 ? 12 : 13;
         else
             newTileID = (rand() % 10) < 9 ? 1 : 2;
@@ -504,7 +432,7 @@ namespace gm
         bool is_merge = false;
         bool didShift = false;
 
-        if (dirY == -1) //上+
+        if (dirY == -1) //上
         {
             for (int x=0; x<FIELD_WIDTH; x++)
             {   
@@ -610,6 +538,7 @@ namespace gm
         }
     
         if (didShift){ //移完之後的行動
+            chanceAndDestiny();
         }
 
         bool isFilled = true;
@@ -663,44 +592,126 @@ namespace gm
     {
         char srcVal = tempMap[f.x][f.y];
         char destVal = tempMap[t.x][t.y];
-        tempMap[t.x][t.y] = (is_merge) ? srcVal+1 : srcVal;
-        tempMap[f.x][f.y] = 0;
-        
-        if ( f != t )
+
+        if (is_merge)
         {
-            
             if ( destVal == 12 )
             {
                 chanceYes = true;
-                map[f.x][f.y] = 0;
-                tempMap[f.x][f.y] = 0;
-                map[t.x][t.y] = 0;
                 tempMap[t.x][t.y] = 0;
+                srcVal = 0;
             }
-            if ( destVal == 13 )
+            else if ( destVal == 13 )
             {
                 destinyYes = true;
-                map[f.x][f.y] = 0;
-                tempMap[f.x][f.y] = 0;
-                map[t.x][t.y] = 0;
                 tempMap[t.x][t.y] = 0;
+                srcVal = 0;
             }
-            if ( destVal != 12 &&  destVal != 13 )
-            {   
-                /*
-                tempMap[t.x][t.y] = srcVal + 1;
-                if (srcVal + 1 == 12 ) Reset();
-                */
-
-                map[f.x][f.y] = 0;
-                moves.push_back(std::make_pair(std::make_pair(f, t), srcVal));
-
-                animState = true;
-                animClock.restart();
+            else 
+            {
+                tempMap[t.x][t.y] = srcVal+1;
             }
+        }
+        else 
+        {
+            tempMap[t.x][t.y] = srcVal;
+        }
+        tempMap[f.x][f.y] = 0;
+        map[f.x][f.y] = 0;
+
+        moves.push_back(std::make_pair(std::make_pair(f, t), srcVal));
+        animState = true;
+        animClock.restart();
+    }
+
+    void Game::chanceAndDestiny()
+    {
+        // 機會：所有數字乘2，且場上所有機會、命運的都會消失
+        if ( chanceYes )
+        {
+            for (int x = 0; x < FIELD_WIDTH; x++)
+            {
+                for (int y = 0; y < FIELD_HEIGHT; y++)
+                {
+                    if ( map[x][y] == 12 || map[x][y] == 13 )
+                        break;
+                    if ( map[x][y] != 0)
+                    {
+                        map[x][y] += 1;
+                        tempMap[x][y] += 1;
+                    }
+                }
+            }
+            deletechanceAndDenstiny();
+            chanceYes = false;
+        }
+        
+        // 命運：所有數字除 2 or 炸彈 (清空所有數字)，且場上所有的機會、命運都會消失
+        if ( destinyYes )
+        {
+            int t = rand() ;
+            if ( t % 20 == 0 ) // 炸彈，清空所有空格 (機率 5%)
+            {
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                {
+                    for (int y = 0; y < FIELD_HEIGHT; y++)
+                    {  
+                            map[x][y] = 0;
+                    }
+                }
+            }
+            else if ( t % 20 == 1 || t % 20 == 2 || t % 20 == 3 || t % 20 == 4 )
+            // 所有數字乘 4 (機率 20%)
+            {
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                {
+                    for (int y = 0; y < FIELD_HEIGHT; y++)
+                    {   
+                        if ( map[x][y] == 12 || map[x][y] == 13 )
+                            break;
+                        if ( map[x][y] != 0 && map[x][y] < 9 )
+                            map[x][y] += 2;
+                    }
+                }
+            }
+            else // 所有數字除 2（若數字為2則變成空白）(機率 75%)
+            {
+                for (int x = 0; x < FIELD_WIDTH; x++)
+                {
+                    for (int y = 0; y < FIELD_HEIGHT; y++)
+                    {
+                        if ( map[x][y] == 12 || map[x][y] == 13 )
+                            break;
+                        if ( map[x][y] != 0 && map[x][y] < 10 ) //(10是1024)
+                        {
+                            map[x][y] -= 1;
+                            tempMap[x][y] -= 1;
+                        }
+                    }
+                }
+            }
+            deletechanceAndDenstiny();
+            destinyYes = false;   
         }
     }
 
+    void Game::deletechanceAndDenstiny()
+    {
+        for (int x=0; x<FIELD_WIDTH; x++)
+            for (int y=0; y<FIELD_HEIGHT; y++)
+                if ( map[x][y] == 12 || map[x][y] == 13) map[x][y] = 0;
+    }
+
+    void Game::coutMap()
+    {
+        for (int a=0; a<FIELD_WIDTH; a++)
+        {
+            for (int b=0; b<FIELD_HEIGHT; b++)
+                std::cout << int(map[b][a]) << " ";
+            std::cout << "\n";
+        }
+    std::cout << "\n";
+    }
 
     // void Game::applyMove(sf::Vector2i f, sf::Vector2i t, int dx, int dy)
     // {
