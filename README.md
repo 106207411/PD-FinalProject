@@ -4,4 +4,4 @@ It is a game where you have to combine tiles with the same number to get the 204
 You can choose the theme (classic 2048, schools, and cats) in the settings menu. 
 
 ### 3 themes 
-![](./images/game.png)
+![](./src/images/game.png)
